@@ -1,0 +1,16 @@
+### Ajout d'une blague
+POST http://{{host}}:{{port}}/{{path}}/add
+content-type: application/json
+accept: application/json
+
+{
+    "joke": "This is a joke"
+}
+
+### Récupération d'une blague
+GET http://{{host}}:{{port}}/{{path}}/getRandomJoke
+accept: application/json
+
+### Récupération d'une blague
+GET http://{{host}}:{{port}}/{{path}}/getRandomJoke2
+accept: application/json
