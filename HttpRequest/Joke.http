@@ -7,6 +7,28 @@ accept: application/json
     "joke": "This is a joke"
 }
 
+### Recherche d'une blague par son id
+GET http://{{host}}:{{port}}/{{path}}/getById/81
+accept: application/json
+
 ### Récupération d'une blague
 GET http://{{host}}:{{port}}/{{path}}/getRandomJoke
 accept: application/json
+
+### Modification d'une blague
+PUT http://{{host}}:{{port}}/{{path}}/update
+content-type: application/json
+accept: application/json
+
+{
+    "id": 81,
+    "joke": "This is a joke2"
+}
+
+### Suppression d'une blague
+DELETE http://{{host}}:{{port}}/{{path}}/delete
+content-type: application/json
+
+{
+    "id": 81
+}

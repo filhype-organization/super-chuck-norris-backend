@@ -9,6 +9,11 @@ import jakarta.enterprise.context.ApplicationScoped;
 public class JokeService {
 
     @WithSession
+    public Uni<Joke> GetJokeById(Long id) {
+        return Joke.findById(id);
+    }
+
+    @WithSession
     public Uni<Joke> GetRandomJoke() {
         return Joke.count()
                 .map(count -> (int) (Math.random() * count))
@@ -19,4 +24,19 @@ public class JokeService {
     public Uni<Joke> AddJoke(Joke joke) {
         return joke.persist().map(j -> joke);
     }
+
+    @WithSession
+    public Uni<Joke> UpdateJoke(Joke joke) {
+        return Joke.findById(joke.id)
+                .onItem().ifNotNull().transformToUni(j -> {
+                    j = joke;
+                    return j.persist();
+                });
+    }
+
+    @WithSession
+    public Uni<Void> DeleteJoke(Long id) {
+        return Joke.deleteById(id).map(deleted -> null);
+    }
+
 }
