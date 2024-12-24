@@ -78,3 +78,4 @@ INSERT INTO Joke (id, created_at, joke) VALUES (77, '2024-12-16T08:30:48.6772001
 INSERT INTO Joke (id, created_at, joke) VALUES (78, '2024-12-16T08:30:48.6772001', 'Chuck Norris''s brain waves are suspected to be harmful to cell phones.');
 INSERT INTO Joke (id, created_at, joke) VALUES (79, '2024-12-16T08:30:48.6772001', 'Who knows what evil lurks in the hearts of men? Goddamn Chuck Norris, that''s who.');
 INSERT INTO Joke (id, created_at, joke) VALUES (80, '2024-12-16T08:30:48.6772001', 'There is no such thing as global warming. Chuck Norris was cold, so he turned the sun up.');
+ALTER SEQUENCE JOKE_SEQ INCREMENT BY 1 RESTART WITH 81;
