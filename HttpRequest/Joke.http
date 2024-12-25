@@ -8,7 +8,7 @@ accept: application/json
 }
 
 ### Recherche d'une blague par son id
-GET http://{{host}}:{{port}}/{{path}}/getById/81
+GET http://{{host}}:{{port}}/{{path}}/getById/82
 accept: application/json
 
 ### Récupération d'une blague
@@ -21,8 +21,9 @@ content-type: application/json
 accept: application/json
 
 {
-    "id": 81,
-    "joke": "This is a joke2"
+  "id": 81,
+  "created_at": "2024-12-25T08:36:23.333805",
+  "joke": "This is a joke2"
 }
 
 ### Suppression d'une blague
@@ -30,5 +31,7 @@ DELETE http://{{host}}:{{port}}/{{path}}/delete
 content-type: application/json
 
 {
-    "id": 81
+  "id": 81,
+  "created_at": "2024-12-25T08:36:23.333805",
+  "joke": "This is a joke"
 }

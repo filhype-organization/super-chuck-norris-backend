@@ -1,9 +1,13 @@
 package com.orange.devrap.service;
 
 import com.orange.devrap.entity.Joke;
+import io.quarkus.hibernate.reactive.panache.PanacheEntityBase;
 import io.quarkus.hibernate.reactive.panache.common.WithSession;
+import io.quarkus.hibernate.reactive.panache.common.WithTransaction;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
+
+import java.util.Optional;
 
 @ApplicationScoped
 public class JokeService {
@@ -20,23 +24,26 @@ public class JokeService {
                 .chain(random -> Joke.findAll().page(random, 1).firstResult());
     }
 
-    @WithSession
+    @WithTransaction
     public Uni<Joke> AddJoke(Joke joke) {
         return joke.persist().map(j -> joke);
     }
 
-    @WithSession
-    public Uni<Joke> UpdateJoke(Joke joke) {
-        return Joke.findById(joke.id)
-                .onItem().ifNotNull().transformToUni(j -> {
-                    j = joke;
-                    return j.persist();
+    @WithTransaction
+    public Uni<Joke> UpdateJoke(Joke updateJoke) {
+        return Joke.<Joke>findById(updateJoke.id)
+                .onItem().ifNotNull().invoke(findJoke -> {
+                    findJoke.joke = updateJoke.joke;
+                    findJoke.created_at = updateJoke.created_at;
+                    findJoke.persist();
                 });
     }
 
-    @WithSession
+    @WithTransaction
     public Uni<Void> DeleteJoke(Long id) {
-        return Joke.deleteById(id).map(deleted -> null);
+        return Joke.findById(id)
+                .onItem().ifNotNull().invoke(PanacheEntityBase::delete)
+                .map(j -> null);
     }
 
 }

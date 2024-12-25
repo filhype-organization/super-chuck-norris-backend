@@ -2,7 +2,6 @@ package com.orange.devrap.controller;
 
 import com.orange.devrap.entity.Joke;
 import com.orange.devrap.service.JokeService;
-import io.quarkus.logging.Log;
 import io.quarkus.vertx.web.Body;
 import io.quarkus.vertx.web.Param;
 import io.quarkus.vertx.web.Route;
@@ -18,12 +17,20 @@ public class JokeResource {
     JokeService jokeService;
 
     @Route(path = "api/v1/jokes/getById/:id", methods = Route.HttpMethod.GET)
-    void getAsyncJokeById(@Param String id, RoutingExchange ex) {
-        jokeService.GetJokeById(Long.parseLong(id))
-            .subscribe().with(
-                    joke -> ex.response().putHeader("content-type", "application/json").end(JsonObject.mapFrom(joke).encode()),
-                    error -> ex.response().setStatusCode(500).end()
-            );
+    void getAsyncJokeById(@Param Long id, RoutingExchange ex) {
+        jokeService.GetJokeById(id)
+                .subscribe().with(
+                        joke -> {
+                            if (joke == null) {
+                                ex.response().setStatusCode(404).end("Joke not found");
+                            } else {
+                                ex.response()
+                                        .putHeader("content-type", "application/json")
+                                        .end(JsonObject.mapFrom(joke).encode());
+                            }
+                        },
+                        error -> ex.response().setStatusCode(500).end("Internal Server Error")
+                );
     }
 
     @Route(path = "api/v1/jokes/getRandomJoke", methods = Route.HttpMethod.GET)
