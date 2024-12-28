@@ -45,7 +45,7 @@ public class JokeResource {
         return jokeService.GetJokeById(id)
                 .onItem().transform(joke -> {
                     if (joke == null) {
-                        return Response.status(Response.Status.NOT_FOUND).build();
+                        return Response.status(Response.Status.NOT_FOUND).entity(new Joke(null, "no joke found")).build();
                     } else {
                         return Response.ok(joke).build();
                     }
