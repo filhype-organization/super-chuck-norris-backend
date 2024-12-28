@@ -9,6 +9,8 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.Response;
+import org.jboss.logging.annotations.Param;
+import org.jboss.resteasy.reactive.RestPath;
 
 @Path("api/v1/jokes")
 @ApplicationScoped
@@ -22,6 +24,17 @@ public class JokeResource {
     @Produces("application/json")
     public Response getRandomJoke() {
         Joke j = jokeService.GetRandomJoke();
+        if (j == null) {
+            return Response.status(500).entity(new Joke(null, "no joke found")).build();
+        }
+        return Response.ok(j).build();
+    }
+
+    @GET
+    @Path("getJokeById/{id}")
+    @Produces("application/json")
+    public Response getJokeById(@RestPath String id) {
+        Joke j = jokeService.GetJokeById(Long.parseLong(id));
         if (j == null) {
             return Response.status(500).entity(new Joke(null, "no joke found")).build();
         }

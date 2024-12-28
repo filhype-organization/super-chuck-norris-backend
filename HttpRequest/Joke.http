@@ -10,3 +10,7 @@ accept: application/json
 ### Récupération d'une blague
 GET http://{{host}}:{{port}}/{{path}}/getRandomJoke
 accept: application/json
+
+### Récupération par id
+GET http://{{host}}:{{port}}/{{path}}/getJokeById/82
+accept: application/json

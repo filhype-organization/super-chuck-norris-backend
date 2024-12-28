@@ -14,6 +14,10 @@ public class JokeService {
         return Joke.findAll().page(random, 1).firstResult();
     }
 
+    public Joke GetJokeById(Long id) {
+        return Joke.findById(id);
+    }
+
     @Transactional
     public Joke AddJoke(Joke joke) {
         joke.persist();
