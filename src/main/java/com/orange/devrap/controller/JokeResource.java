@@ -43,7 +43,12 @@ public class JokeResource {
     @Path("/getById2/{id:\\d+}")
     @GET
     public Uni<Joke> GetJokeById(Long id) {
-        return jokeService.GetJokeById(id);
+        Uni<Joke> j = jokeService.GetJokeById(id);
+        if(j == null) {
+            return new Uni<void>().
+        }else {
+            return j;
+        }
     }
 
     @Route(path = "api/v1/jokes/getRandomJoke", methods = Route.HttpMethod.GET)
