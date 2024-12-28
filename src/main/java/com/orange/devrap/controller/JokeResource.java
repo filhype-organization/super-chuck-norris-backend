@@ -6,10 +6,16 @@ import io.quarkus.vertx.web.Body;
 import io.quarkus.vertx.web.Param;
 import io.quarkus.vertx.web.Route;
 import io.quarkus.vertx.web.RoutingExchange;
+import io.smallrye.mutiny.Uni;
 import io.vertx.core.json.JsonObject;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
 
+@Path("api/v1/jokes")
 @ApplicationScoped
 public class JokeResource {
 
@@ -31,6 +37,13 @@ public class JokeResource {
                         },
                         error -> ex.response().setStatusCode(500).end("Internal Server Error")
                 );
+    }
+
+    @Produces("application/json")
+    @Path("/getById2/{id:\\d+}")
+    @GET
+    public Uni<Joke> GetJokeById(Long id) {
+        return jokeService.GetJokeById(id);
     }
 
     @Route(path = "api/v1/jokes/getRandomJoke", methods = Route.HttpMethod.GET)
@@ -66,4 +79,6 @@ public class JokeResource {
                 error -> ex.response().setStatusCode(500).end()
         );
     }
+
+
 }
