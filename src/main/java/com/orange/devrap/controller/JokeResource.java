@@ -17,7 +17,7 @@ public class JokeResource {
     JokeService jokeService;
 
     @Produces("application/json")
-    @Path("/getById/{id:\\d+}")
+    @Path("/{id:\\d+}")
     @GET
     public Uni<Response> GetJokeById(Long id) {
         return jokeService.GetJokeById(id)
@@ -56,12 +56,16 @@ public class JokeResource {
                 .onItem().transform(j -> Response.ok(j).build());
     }
 
-    @Consumes("application/json")
-    @Path("/delete")
+    @Path("/{id:\\d+}")
     @DELETE
-    public Uni<Response> DeleteJoke(Joke joke) {
-        return jokeService.DeleteJoke(joke.id)
-                .onItem().transform(j -> Response.noContent().build());
+    public Uni<Response> DeleteJoke(Long id) {
+        return jokeService.DeleteJoke(id).onItem().transform(j -> {
+            if (j) {
+                return Response.noContent().build();
+            } else {
+                throw new NotFoundException("Joke not found");
+            }
+        });
     }
 }
 

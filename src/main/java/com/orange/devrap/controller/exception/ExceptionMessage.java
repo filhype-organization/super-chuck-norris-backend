@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 public class ExceptionMessage{
     LocalDateTime timestamp;
     int statusCode;
-    String title;
+    String message;
     String path;
+    String method;
 }

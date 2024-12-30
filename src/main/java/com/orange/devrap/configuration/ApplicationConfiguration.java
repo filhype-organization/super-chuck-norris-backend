@@ -21,7 +21,7 @@ public class ApplicationConfiguration {
             status = ((WebApplicationException) thisException).getResponse().getStatus();
         }
 
-        ExceptionMessage exceptionMessage = new ExceptionMessage(LocalDateTime.now(), status, thisException.getMessage(), uriInfo.getPath());
+        ExceptionMessage exceptionMessage = new ExceptionMessage(LocalDateTime.now(), status, thisException.getMessage(), uriInfo.getPath(), containerRequestContext.getMethod());
 
         return Response.status(status)
                 .entity(exceptionMessage)
