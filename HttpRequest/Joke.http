@@ -8,7 +8,7 @@ accept: application/json
 }
 
 ### Recherche d'une blague par son id
-GET http://{{host}}:{{port}}/{{path}}/getById2/81
+GET http://{{host}}:{{port}}/{{path}}/getById/81
 accept: application/json
 
 ### Récupération d'une blague

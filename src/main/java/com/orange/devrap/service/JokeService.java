@@ -7,8 +7,6 @@ import io.quarkus.hibernate.reactive.panache.common.WithTransaction;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 
-import java.util.Optional;
-
 @ApplicationScoped
 public class JokeService {
 
