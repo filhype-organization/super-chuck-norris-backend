@@ -1,17 +1,29 @@
 package com.orange.devrap.entity;
 
-import io.quarkus.hibernate.orm.panache.PanacheEntity;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.Entity;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotBlank;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
-@AllArgsConstructor
-@NoArgsConstructor
-public class Joke extends PanacheEntity {
+public class Joke extends PanacheEntityBase {
 
-    public LocalDateTime created_at = LocalDateTime.now();
+    @Id
+    @GeneratedValue
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    public UUID id;
+
+    @CreationTimestamp
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    public LocalDateTime created_at;
+
+    @NotBlank
     public String joke;
 }
+

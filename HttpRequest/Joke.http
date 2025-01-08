@@ -12,5 +12,5 @@ GET http://{{host}}:{{port}}/{{path}}/getRandomJoke
 accept: application/json
 
 ### Récupération par id
-GET http://{{host}}:{{port}}/{{path}}/getJokeById/82
+GET http://{{host}}:{{port}}/{{path}}/9ef7e659-1e62-46c5-a9cb-1bd378ff06f7
 accept: application/json
