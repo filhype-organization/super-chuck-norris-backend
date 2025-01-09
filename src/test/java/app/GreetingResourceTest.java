@@ -1,4 +1,4 @@
-package com.orange.devrap;
+package app;
 
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;

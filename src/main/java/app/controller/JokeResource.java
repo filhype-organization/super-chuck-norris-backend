@@ -1,14 +1,11 @@
-package com.orange.devrap.controller;
+package app.controller;
 
-import com.orange.devrap.entity.Joke;
-import com.orange.devrap.service.JokeService;
+import app.entity.Joke;
+import app.service.JokeService;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
-import jakarta.ws.rs.core.Response;
 import org.jboss.resteasy.reactive.RestPath;
-
-import java.util.Optional;
 import java.util.UUID;
 
 @Path("api/jokes/v1")
@@ -31,20 +28,32 @@ public class JokeResource {
     @GET
     @Path("/{id}")
     @Produces("application/json")
-    public Optional<PanacheEntityBase> getJokeById(@RestPath UUID id) {
-        //        if (joke.isEmpty()) {
-//            return Response.status(Response.Status.NOT_FOUND).build();
-//        }
-        return Joke.findByIdOptional(id);
-
+    public PanacheEntityBase getJokeById(@RestPath UUID id) {
+        return Joke.findByIdOptional(id).orElseThrow(NotFoundException::new);
     }
 
     @POST
-    @Path("add")
     @Produces("application/json")
     @Consumes("application/json")
     public Joke addJoke(Joke joke) {
         return jokeService.AddJoke(joke);
     }
 
+    @PUT
+    @Produces("application/json")
+    @Consumes("application/json")
+    public Joke updateJoke(Joke joke) {
+        Joke j = jokeService.UpdateJoke(joke);
+        if (j == null) {
+            throw new NotFoundException("Joke not found");
+        }
+        return j;
+    }
+
+    @DELETE
+    @Path("/{id}")
+    public void deleteJoke(@RestPath UUID id) {
+        Joke j = (Joke) Joke.findByIdOptional(id).orElseThrow(NoClassDefFoundError::new);
+        jokeService.DeleteJoke(j.id);
+    }
 }

@@ -1,6 +1,5 @@
-package com.orange.devrap.entity;
+package app.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -16,11 +15,9 @@ public class Joke extends PanacheEntityBase {
 
     @Id
     @GeneratedValue
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     public UUID id;
 
     @CreationTimestamp
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     public LocalDateTime created_at;
 
     @NotBlank
