@@ -7,7 +7,7 @@ import io.smallrye.mutiny.unchecked.Unchecked;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
-import jakarta.ws.rs.core.Response;
+import org.jboss.resteasy.reactive.RestResponse;
 
 @Path("api/v1/jokes")
 @ApplicationScoped
@@ -19,13 +19,13 @@ public class JokeResource {
     @Produces("application/json")
     @Path("/{id:\\d+}")
     @GET
-    public Uni<Response> GetJokeById(Long id) {
+    public Uni<Joke> GetJokeById(Long id) {
         return jokeService.GetJokeById(id)
                 .onItem().transform(Unchecked.function(joke -> {
                     if (joke == null) {
                         throw new NotFoundException("Joke not found");
                     } else {
-                        return Response.ok(joke).build();
+                        return joke;
                     }
                 }));
     }
@@ -33,39 +33,34 @@ public class JokeResource {
     @Produces("application/json")
     @Path("/getRandomJoke")
     @GET
-    public Uni<Response> GetRandomJoke() {
-        return jokeService.GetRandomJoke()
-                .onItem().transform(joke -> Response.ok(joke).build());
+    public Uni<Joke> GetRandomJoke() {
+        return jokeService.GetRandomJoke();
     }
 
     @Consumes("application/json")
     @Produces("application/json")
     @Path("/add")
     @POST
-    public Uni<Response> AddJoke(Joke joke) {
-        return jokeService.AddJoke(joke)
-                .onItem().transform(j -> Response.status(201).entity(j).build());
+    public Uni<RestResponse<Joke>> AddJoke(Joke joke) {
+        return jokeService.AddJoke(joke).replaceWith(RestResponse.status(RestResponse.Status.CREATED, joke));
     }
 
     @Consumes("application/json")
     @Produces("application/json")
     @Path("/update")
     @PUT
-    public Uni<Response> UpdateJoke(Joke joke) {
-        return jokeService.UpdateJoke(joke)
-                .onItem().transform(j -> Response.ok(j).build());
+    public Uni<Joke> UpdateJoke(Joke joke) {
+        return jokeService.UpdateJoke(joke);
     }
 
     @Path("/{id:\\d+}")
     @DELETE
-    public Uni<Response> DeleteJoke(Long id) {
-        return jokeService.DeleteJoke(id).onItem().transform(j -> {
-            if (j) {
-                return Response.noContent().build();
-            } else {
+    public Uni<RestResponse<Void>> DeleteJoke(Long id) {
+        return jokeService.DeleteJoke(id).onItem().invoke(j -> {
+            if (!j) {
                 throw new NotFoundException("Joke not found");
             }
-        });
+        }).replaceWith(RestResponse.status(RestResponse.Status.NO_CONTENT, null));
     }
 }
 
