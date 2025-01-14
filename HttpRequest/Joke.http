@@ -1,12 +1,30 @@
+### Récupération d'une blague
+GET http://{{host}}:{{port}}/{{path}}/getRandomJoke
+accept: application/json
+
+### Récupération par id
+GET http://{{host}}:{{port}}/{{path}}/f4741513-f6af-4c44-9338-643a6407b482
+accept: application/json
+
 ### Ajout d'une blague
-POST http://{{host}}:{{port}}/{{path}}/add
+POST http://{{host}}:{{port}}/{{path}}
 content-type: application/json
 accept: application/json
 
 {
-    "joke": "This is a joke"
+  "joke": "This is a joke"
 }
 
-### Récupération d'une blague
-GET http://{{host}}:{{port}}/{{path}}/getRandomJoke
+### Modification d'une blague
+PUT http://{{host}}:{{port}}/{{path}}
+Content-Type: application/json
 accept: application/json
+
+{
+  "id": "b9355b82-0f16-484d-8ab4-2e4feb8cd82e",
+  "created_at": "2025-01-09T21:16:10.093248",
+  "joke": "toto"
+}
+
+### Suppression d'une blague
+DELETE http://{{host}}:{{port}}/{{path}}/ba31f13b-3b1f-4db0-bf0e-9371e6cc956a
