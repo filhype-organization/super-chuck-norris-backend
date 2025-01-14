@@ -5,6 +5,7 @@ import app.service.JokeService;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
+import org.jboss.resteasy.reactive.ResponseStatus;
 import org.jboss.resteasy.reactive.RestPath;
 import java.util.UUID;
 
@@ -32,6 +33,7 @@ public class JokeResource {
         return Joke.findByIdOptional(id).orElseThrow(NotFoundException::new);
     }
 
+    @ResponseStatus(201)
     @POST
     @Produces("application/json")
     @Consumes("application/json")

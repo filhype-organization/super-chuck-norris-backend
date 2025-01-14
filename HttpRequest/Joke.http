@@ -3,7 +3,7 @@ GET http://{{host}}:{{port}}/{{path}}/getRandomJoke
 accept: application/json
 
 ### Récupération par id
-GET http://{{host}}:{{port}}/{{path}}/3a1ee4f0-f422-4eac-b9cd-335d72ce07f3
+GET http://{{host}}:{{port}}/{{path}}/f4741513-f6af-4c44-9338-643a6407b482
 accept: application/json
 
 ### Ajout d'une blague
@@ -27,4 +27,4 @@ accept: application/json
 }
 
 ### Suppression d'une blague
-DELETE http://{{host}}:{{port}}/{{path}}/3a1ee4f0-f422-4eac-b9cd-335d72ce07f3
+DELETE http://{{host}}:{{port}}/{{path}}/ba31f13b-3b1f-4db0-bf0e-9371e6cc956a
