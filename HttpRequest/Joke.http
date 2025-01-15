@@ -1,19 +1,19 @@
+### Recherche d'une blague par son id
+GET http://{{host}}:{{port}}/{{path}}/81
+accept: application/json
+
+### Récupération d'une blague
+GET http://{{host}}:{{port}}/{{path}}/getRandomJoke
+accept: application/json
+
 ### Ajout d'une blague
 POST http://{{host}}:{{port}}/{{path}}/add
 content-type: application/json
 accept: application/json
 
 {
-    "joke": "This is a joke"
+  "joke": "This is a joke"
 }
-
-### Recherche d'une blague par son id
-GET http://{{host}}:{{port}}/{{path}}/getById2/79
-accept: application/json
-
-### Récupération d'une blague
-GET http://{{host}}:{{port}}/{{path}}/getRandomJoke
-accept: application/json
 
 ### Modification d'une blague
 PUT http://{{host}}:{{port}}/{{path}}/update
@@ -22,16 +22,9 @@ accept: application/json
 
 {
   "id": 81,
-  "created_at": "2024-12-25T08:36:23.333805",
-  "joke": "This is a joke2"
+  "created_at": "2025-01-14T11:32:07.809979",
+  "joke": "toto"
 }
 
 ### Suppression d'une blague
-DELETE http://{{host}}:{{port}}/{{path}}/delete
-content-type: application/json
-
-{
-  "id": 81,
-  "created_at": "2024-12-25T08:36:23.333805",
-  "joke": "This is a joke"
-}
+DELETE http://{{host}}:{{port}}/{{path}}/81

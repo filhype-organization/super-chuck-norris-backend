@@ -1,13 +1,10 @@
 package com.orange.devrap.service;
 
 import com.orange.devrap.entity.Joke;
-import io.quarkus.hibernate.reactive.panache.PanacheEntityBase;
 import io.quarkus.hibernate.reactive.panache.common.WithSession;
 import io.quarkus.hibernate.reactive.panache.common.WithTransaction;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
-
-import java.util.Optional;
 
 @ApplicationScoped
 public class JokeService {
@@ -40,10 +37,8 @@ public class JokeService {
     }
 
     @WithTransaction
-    public Uni<Void> DeleteJoke(Long id) {
-        return Joke.findById(id)
-                .onItem().ifNotNull().invoke(PanacheEntityBase::delete)
-                .map(j -> null);
+    public Uni<Boolean> DeleteJoke(Long id) {
+        return Joke.deleteById(id);
     }
 
 }

@@ -2,18 +2,12 @@ package com.orange.devrap.controller;
 
 import com.orange.devrap.entity.Joke;
 import com.orange.devrap.service.JokeService;
-import io.quarkus.vertx.web.Body;
-import io.quarkus.vertx.web.Param;
-import io.quarkus.vertx.web.Route;
-import io.quarkus.vertx.web.RoutingExchange;
 import io.smallrye.mutiny.Uni;
-import io.vertx.core.json.JsonObject;
+import io.smallrye.mutiny.unchecked.Unchecked;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.*;
+import org.jboss.resteasy.reactive.RestResponse;
 
 @Path("api/v1/jokes")
 @ApplicationScoped
@@ -22,68 +16,51 @@ public class JokeResource {
     @Inject
     JokeService jokeService;
 
-    @Route(path = "api/v1/jokes/getById/:id", methods = Route.HttpMethod.GET)
-    void getAsyncJokeById(@Param Long id, RoutingExchange ex) {
-        jokeService.GetJokeById(id)
-                .subscribe().with(
-                        joke -> {
-                            if (joke == null) {
-                                ex.response().setStatusCode(404).end("Joke not found");
-                            } else {
-                                ex.response()
-                                        .putHeader("content-type", "application/json")
-                                        .end(JsonObject.mapFrom(joke).encode());
-                            }
-                        },
-                        error -> ex.response().setStatusCode(500).end("Internal Server Error")
-                );
+    @Produces("application/json")
+    @Path("/{id:\\d+}")
+    @GET
+    public Uni<Joke> GetJokeById(Long id) {
+        return jokeService.GetJokeById(id)
+                .onItem().transform(Unchecked.function(joke -> {
+                    if (joke == null) {
+                        throw new NotFoundException("Joke not found");
+                    } else {
+                        return joke;
+                    }
+                }));
     }
 
     @Produces("application/json")
-    @Path("/getById2/{id:\\d+}")
+    @Path("/getRandomJoke")
     @GET
-    public Uni<Joke> GetJokeById(Long id) {
-        Uni<Joke> j = jokeService.GetJokeById(id);
-        if(j == null) {
-            return new Uni<void>().
-        }else {
-            return j;
-        }
+    public Uni<Joke> GetRandomJoke() {
+        return jokeService.GetRandomJoke();
     }
 
-    @Route(path = "api/v1/jokes/getRandomJoke", methods = Route.HttpMethod.GET)
-    void getAsyncRandomJoke(RoutingExchange ex) {
-        jokeService.GetRandomJoke()
-            .subscribe().with(
-                    joke -> ex.response().putHeader("content-type", "application/json").end(JsonObject.mapFrom(joke).encode()),
-                    error -> ex.response().setStatusCode(500).end()
-            );
+    @Consumes("application/json")
+    @Produces("application/json")
+    @Path("/add")
+    @POST
+    public Uni<RestResponse<Joke>> AddJoke(Joke joke) {
+        return jokeService.AddJoke(joke).replaceWith(RestResponse.status(RestResponse.Status.CREATED, joke));
     }
 
-    @Route(path = "api/v1/jokes/add", methods = Route.HttpMethod.POST)
-    public void addJoke(RoutingExchange ex, @Body Joke joke) {
-        jokeService.AddJoke(joke).subscribe().with(
-                j -> ex.response().setStatusCode(201).putHeader("content-type", "application/json").end(JsonObject.mapFrom(j).encode()),
-                error -> ex.response().setStatusCode(500).end()
-        );
-
+    @Consumes("application/json")
+    @Produces("application/json")
+    @Path("/update")
+    @PUT
+    public Uni<Joke> UpdateJoke(Joke joke) {
+        return jokeService.UpdateJoke(joke);
     }
 
-    @Route(path = "api/v1/jokes/update", methods = Route.HttpMethod.PUT)
-    public void updateJoke(RoutingExchange ex, @Body Joke joke) {
-        jokeService.UpdateJoke(joke).subscribe().with(
-                j -> ex.response().putHeader("content-type", "application/json").end(JsonObject.mapFrom(j).encode()),
-                error -> ex.response().setStatusCode(500).end()
-        );
+    @Path("/{id:\\d+}")
+    @DELETE
+    public Uni<RestResponse<Void>> DeleteJoke(Long id) {
+        return jokeService.DeleteJoke(id).onItem().invoke(j -> {
+            if (!j) {
+                throw new NotFoundException("Joke not found");
+            }
+        }).replaceWith(RestResponse.status(RestResponse.Status.NO_CONTENT, null));
     }
-
-    @Route(path = "api/v1/jokes/delete", methods = Route.HttpMethod.DELETE)
-    public void deleteJoke(RoutingExchange ex, @Body Joke joke) {
-        jokeService.DeleteJoke(joke.id).subscribe().with(
-                j -> ex.response().setStatusCode(204).end(),
-                error -> ex.response().setStatusCode(500).end()
-        );
-    }
-
-
 }
+
