@@ -8,5 +8,4 @@ jobs:
 
     steps:
       - name: test
-        uses: actions/checkout@v4
         run: ./mvnw quarkus:test
