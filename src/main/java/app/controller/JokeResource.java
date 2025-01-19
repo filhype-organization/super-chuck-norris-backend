@@ -9,14 +9,14 @@ import org.jboss.resteasy.reactive.ResponseStatus;
 import org.jboss.resteasy.reactive.RestPath;
 import java.util.UUID;
 
-@Path("api/jokes/v1")
+@Path("/api/jokes/v1")
 public class JokeResource {
 
     @Inject
     JokeService jokeService;
 
     @GET
-    @Path("getRandomJoke")
+    @Path("/getRandomJoke")
     @Produces("application/json")
     public Joke getRandomJoke() {
         Joke j = jokeService.GetRandomJoke();
@@ -27,7 +27,7 @@ public class JokeResource {
     }
 
     @GET
-    @Path("/{id}")
+    @Path("{id}")
     @Produces("application/json")
     public PanacheEntityBase getJokeById(@RestPath UUID id) {
         return Joke.findByIdOptional(id).orElseThrow(NotFoundException::new);
@@ -53,7 +53,7 @@ public class JokeResource {
     }
 
     @DELETE
-    @Path("/{id}")
+    @Path("{id}")
     public void deleteJoke(@RestPath UUID id) {
         Joke j = (Joke) Joke.findByIdOptional(id).orElseThrow(NoClassDefFoundError::new);
         jokeService.DeleteJoke(j.id);

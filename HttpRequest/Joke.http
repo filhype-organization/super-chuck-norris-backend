@@ -1,4 +1,8 @@
 ### Récupération d'une blague
+GET http://{{host}}:{{port}}/getJoke
+accept: application/json
+
+### Récupération d'une blague
 GET http://{{host}}:{{port}}/{{path}}/getRandomJoke
 accept: application/json
 
