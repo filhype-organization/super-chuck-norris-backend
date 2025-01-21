@@ -27,4 +27,13 @@ public class ApplicationConfiguration {
                 .type(MediaType.APPLICATION_JSON)
                 .build();
     }
+
+    public record  ExceptionMessage(
+            LocalDateTime timestamp,
+            int statusCode,
+            String message,
+            String path,
+            String method
+    ){}
 }
+

@@ -4,7 +4,10 @@ on: [push, pull_request]
 
 jobs:
   build:
-    runs-on: amazoncorretto:21
+    runs-on: [self-hosted, linux, arm64]
+
+    container:
+      image: amazoncorretto:21
 
     steps:
       - name: test
