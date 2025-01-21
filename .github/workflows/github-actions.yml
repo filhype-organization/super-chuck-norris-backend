@@ -10,5 +10,8 @@ jobs:
       image: amazoncorretto:21
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: test
         run: ./mvnw quarkus:test
