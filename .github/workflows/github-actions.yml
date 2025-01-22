@@ -6,12 +6,16 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    container:
-      image: openjdk:21
-
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
 
       - name: test
         run: ./mvnw quarkus:test
