@@ -3,7 +3,7 @@ name: Chuck Norris action
 on: [push, pull_request]
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
 
     steps:
@@ -19,3 +19,25 @@ jobs:
 
       - name: test
         run: mvn quarkus:test -Dquarkus.test.continuous-testing=disabled
+
+  native-compile:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Install packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y binfmt-support qemu-user-static
+
+      - name: Compilation
+        run: mvn clean package -Dnative -DskipTests -Dquarkus.native.container-build=true -Dquarkus.native.container-runtime-options=--platform=linux/arm64 -Dquarkus.native.builder-image=quay.io/quarkus/ubi-quarkus-mandrel-builder-image:23.1.5.0-Final-java21-arm64
