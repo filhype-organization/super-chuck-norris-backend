@@ -18,4 +18,4 @@ jobs:
           cache: 'maven'
 
       - name: test
-        run: mvn quarkus:test
+        run: mvn quarkus:test -Dquarkus.test.continuous-testing=disabled
