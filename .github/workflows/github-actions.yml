@@ -18,9 +18,10 @@ jobs:
           cache: 'maven'
 
       - name: test
-        run: mvn quarkus:test -Dquarkus.test.continuous-testing=disabled
+        run: chmod +x mvnw; ./mvnw quarkus:test
 
   native-compile:
+    needs: test
     runs-on: ubuntu-latest
 
     steps:
