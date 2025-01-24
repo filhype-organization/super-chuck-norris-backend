@@ -2,6 +2,10 @@ name: Chuck Norris action
 
 on: [push, pull_request]
 
+env:
+  JAVA_VERSION: '21'
+  IMAGE_NAME: 'leeson77/chuck-norris-backend'
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -13,11 +17,11 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
-          java-version: '21'
+          java-version: ${{ env.JAVA_VERSION }}  # Utiliser la variable d'environnement
           distribution: 'temurin'
           cache: 'maven'
 
-      - name: test
+      - name: Run tests
         run: mvn test
 
   native-compile:
@@ -31,7 +35,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
-          java-version: '21'
+          java-version: ${{ env.JAVA_VERSION }}  # Utiliser la variable d'environnement
           distribution: 'temurin'
           cache: 'maven'
 
@@ -42,3 +46,28 @@ jobs:
 
       - name: Compilation
         run: mvn clean package -Dnative -DskipTests -Dquarkus.native.container-build=true -Dquarkus.native.container-runtime-options=--platform=linux/arm64 -Dquarkus.native.builder-image=quay.io/quarkus/ubi-quarkus-mandrel-builder-image:23.1.5.0-Final-java21-arm64
+
+  build-docker:
+    needs: native-compile
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Get version from pom.xml
+        id: get_version
+        run: |
+          version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          echo "version=$version" >> $GITHUB_ENV
+
+      - name: Build Docker image
+        run: |
+          docker build -f src/main/docker/Dockerfile.native-micro -t ${{ env.IMAGE_NAME }}:${{ env.version }} .
+        env:
+          DOCKER_BUILDKIT: 1
+
+      - name: Push Docker image
+        run: |
+          echo "${{ secrets.TOKEN_DOCKER_HUB }}" | docker login -u "${{ secrets.LOGIN_DOCKER_HUB }}" --password-stdin
+          docker push ${{ env.IMAGE_NAME }}:${{ env.version }}
