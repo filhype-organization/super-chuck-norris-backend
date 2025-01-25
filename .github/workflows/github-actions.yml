@@ -74,8 +74,6 @@ jobs:
 
       - name: Build Docker image
         run: |
-          ls -lRt
-          ls -lRt /
           docker build -f src/main/docker/Dockerfile.native-micro -t ${{ env.IMAGE_NAME }}:${{ env.version }} .
         env:
           DOCKER_BUILDKIT: 1
