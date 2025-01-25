@@ -71,11 +71,13 @@ jobs:
           version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
           echo "version=$version" >> $GITHUB_ENV
 
-      - name: Build Docker image
+      - name: debug Docker image
         run: |
           cd target/artifact
           pwd
-          cp target/artifact/*-runner.jar .
+
+      - name: Build Docker image
+        run: |
           cp src/main/docker/Dockerfile.native-micro .
           docker build -f Dockerfile.native-micro -t ${{ env.IMAGE_NAME }}:${{ env.version }} .
         env:
