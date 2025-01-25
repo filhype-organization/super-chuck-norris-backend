@@ -73,6 +73,9 @@ jobs:
 
       - name: Build Docker image
         run: |
+          cd target/artifact
+          pwd
+          cp target/artifact/*-runner.jar .
           cp src/main/docker/Dockerfile.native-micro .
           docker build -f Dockerfile.native-micro -t ${{ env.IMAGE_NAME }}:${{ env.version }} .
         env:
