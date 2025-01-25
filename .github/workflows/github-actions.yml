@@ -45,12 +45,14 @@ jobs:
           sudo apt-get install -y binfmt-support qemu-user-static
 
       - name: Compilation
-        run: mvn clean package -Dnative -DskipTests -Dquarkus.native.container-build=true -Dquarkus.native.container-runtime-options=--platform=linux/arm64 -Dquarkus.native.builder-image=quay.io/quarkus/ubi-quarkus-mandrel-builder-image:23.1.5.0-Final-java21-arm64
+        run: | 
+          mvn clean package -Dnative -DskipTests -Dquarkus.native.container-build=true -Dquarkus.native.container-runtime-options=--platform=linux/arm64 -Dquarkus.native.builder-image=quay.io/quarkus/ubi-quarkus-mandrel-builder-image:23.1.5.0-Final-java21-arm64
+          ls -lRt
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          path: project
+          path: target
 
   build-docker:
     needs: native-compile
@@ -62,7 +64,7 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          path: project
+          path: target
 
       - name: Get version from pom.xml
         id: get_version
@@ -73,6 +75,7 @@ jobs:
       - name: Build Docker image
         run: |
           ls -lRt
+          ls -lRt /
           docker build -f src/main/docker/Dockerfile.native-micro -t ${{ env.IMAGE_NAME }}:${{ env.version }} .
         env:
           DOCKER_BUILDKIT: 1
