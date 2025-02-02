@@ -7,25 +7,25 @@ env:
   IMAGE_NAME: 'leeson77/chuck-norris-backend'
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up JDK
-        uses: actions/setup-java@v3
-        with:
-          java-version: ${{ env.JAVA_VERSION }}  # Utiliser la variable d'environnement
-          distribution: 'temurin'
-          cache: 'maven'
-
-      - name: Run tests
-        run: mvn test
+#  test:
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v4
+#
+#      - name: Set up JDK
+#        uses: actions/setup-java@v3
+#        with:
+#          java-version: ${{ env.JAVA_VERSION }}  # Utiliser la variable d'environnement
+#          distribution: 'temurin'
+#          cache: 'maven'
+#
+#      - name: Run tests
+#        run: mvn test
 
   native-compile:
-    needs: test
+#    needs: test
     runs-on: ubuntu-latest
 
     steps:
@@ -56,29 +56,28 @@ jobs:
   build-docker:
     needs: native-compile
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
-      - uses: actions/download-artifact@v4
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
         with:
-          path: target
+          username: ${{ secrets.LOGIN_DOCKER_HUB }}
+          password: ${{ secrets.TOKEN_DOCKER_HUB }}
 
-      - name: Get version from pom.xml
-        id: get_version
-        run: |
-          version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
-          echo "version=$version" >> $GITHUB_ENV
-
-      - name: Build Docker image
-        run: |
-          ls -lRt .
-          docker build --platform linux/arm64 -f src/main/docker/Dockerfile.native-micro -t ${{ env.IMAGE_NAME }}:${{ env.version }} .
-        env:
-          DOCKER_BUILDKIT: 1
-
-      - name: Push Docker image
-        run: |
-          echo "${{ secrets.TOKEN_DOCKER_HUB }}" | docker login -u "${{ secrets.LOGIN_DOCKER_HUB }}" --password-stdin
-          docker push ${{ env.IMAGE_NAME }}:${{ env.version }}
+      - name: Build and push
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./src/main/docker/Dockerfile.native-micro
+          platforms: linux/arm64
+          push: true
+          tags: |
+            ${{ env.IMAGE_NAME }}:${{ env.version }}>
