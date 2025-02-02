@@ -90,4 +90,4 @@ jobs:
           platforms: linux/arm64
           push: true
           tags: |
-            ${{ env.IMAGE_NAME }}:${{ env.version }}>
+            ${{ env.IMAGE_NAME }}:${{ env.version }}
