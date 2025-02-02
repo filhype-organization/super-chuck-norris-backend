@@ -66,13 +66,14 @@ jobs:
 
       - name: Get version from pom.xml
         run: |
-          ls -lRt
           version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
           echo "version=$version" >> $GITHUB_ENV
 
       - name: Copy entrypoint
         run: |
           cp ./target/artifact/*-runner .
+          ls -lRt
+          pwd
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
