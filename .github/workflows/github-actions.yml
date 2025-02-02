@@ -67,6 +67,7 @@ jobs:
       - name: Get version from pom.xml
         id: get_version
         run: |
+          ls -lRt
           version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
           echo "version=$version" >> $GITHUB_ENV
 
