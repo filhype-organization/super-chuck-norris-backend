@@ -22,6 +22,7 @@ WORKDIR /work/
 RUN chown 1001 /work \
     && chmod "g+rwX" /work \
     && chown 1001:root /work
+ADD --chown=1001:root test.txt /work/
 ADD --chown=1001:root *-runner /work/
 RUN pwd && ls -l
 

@@ -72,6 +72,7 @@ jobs:
       - name: Copy entrypoint
         run: |
           cp ./target/artifact/*-runner .
+          touch test.txt
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
