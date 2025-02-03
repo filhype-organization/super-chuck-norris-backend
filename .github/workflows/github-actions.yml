@@ -71,8 +71,7 @@ jobs:
 
       - name: Copy entrypoint
         run: |
-          cp ./target/artifact/*-runner .
-          touch test.txt
+          cp ./target/artifact/super-chuck-norris-1.0.1-SNAPSHOT-runner .
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -92,7 +91,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          # context: .
+          context: ./target/artifact/
           file: ./src/main/docker/Dockerfile.native-micro
           platforms: linux/arm64
           push: true
