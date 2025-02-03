@@ -22,9 +22,9 @@ WORKDIR /work/
 RUN chown 1001 /work \
     && chmod "g+rwX" /work \
     && chown 1001:root /work
-ADD --chown=1001:root * /work/
+# ADD --chown=1001:root * /work/
 RUN pwd && ls -l
-ADD --chown=1001:root *-runner /work/
+ADD --chown=1001:root super-chuck-norris-1.0.1-SNAPSHOT-runner /work/
 RUN pwd && ls -l
 
 EXPOSE 8080
