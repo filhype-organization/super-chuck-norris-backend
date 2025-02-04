@@ -69,10 +69,6 @@ jobs:
           version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
           echo "version=$version" >> $GITHUB_ENV
 
-      # - name: Copy entrypoint
-      #   run: |
-      #     cp ./target/artifact/super-chuck-norris-1.0.1-SNAPSHOT-runner .
-
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
@@ -84,9 +80,6 @@ jobs:
         with:
           username: ${{ secrets.LOGIN_DOCKER_HUB }}
           password: ${{ secrets.TOKEN_DOCKER_HUB }}
-
-      # - name: list files
-      #   run: ls -la
 
       - name: Build and push
         uses: docker/build-push-action@v6
