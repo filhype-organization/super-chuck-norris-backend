@@ -7,46 +7,46 @@ env:
   IMAGE_NAME: 'leeson77/chuck-norris-backend'
 
 jobs:
-#  test:
-#    runs-on: ubuntu-latest
-#
-#    steps:
-#      - name: Checkout code
-#        uses: actions/checkout@v4
-#
-#      - name: Set up JDK
-#        uses: actions/setup-java@v3
-#        with:
-#          java-version: ${{ env.JAVA_VERSION }}  # Utiliser la variable d'environnement
-#          distribution: 'temurin'
-#          cache: 'maven'
-#
-#      - name: Run tests
-#        run: mvn test
-
-  native-compile:
-#    needs: test
+  test:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-#      - name: Set up JDK
-#        uses: actions/setup-java@v3
-#        with:
-#          java-version: ${{ env.JAVA_VERSION }}  # Utiliser la variable d'environnement
-#          distribution: 'temurin'
-#          cache: 'maven'
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: ${{ env.JAVA_VERSION }}  # Utiliser la variable d'environnement
+          distribution: 'temurin'
+          cache: 'maven'
 
-#      - name: Install packages
-#        run: |
-#          sudo apt-get update
-#          sudo apt-get install -y binfmt-support qemu-user-static
-#
-#      - name: Compilation
-#        run: |
-#          mvn clean package -Dnative -DskipTests -Dquarkus.native.container-build=true -Dquarkus.native.container-runtime-options=--platform=linux/arm64 -Dquarkus.native.builder-image=quay.io/quarkus/ubi-quarkus-mandrel-builder-image:23.1.5.0-Final-java21-arm64
+      - name: Run tests
+        run: mvn test
+
+  native-compile:
+    needs: test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: ${{ env.JAVA_VERSION }}  # Utiliser la variable d'environnement
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Install packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y binfmt-support qemu-user-static
+
+      - name: Compilation
+        run: |
+          mvn clean package -Dnative -DskipTests -Dquarkus.native.container-build=true -Dquarkus.native.container-runtime-options=--platform=linux/arm64 -Dquarkus.native.builder-image=quay.io/quarkus/ubi-quarkus-mandrel-builder-image:23.1.5.0-Final-java21-arm64
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
