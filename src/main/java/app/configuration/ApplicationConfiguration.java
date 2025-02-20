@@ -1,5 +1,6 @@
 package app.configuration;
 
+import io.quarkus.runtime.annotations.RegisterForReflection;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.container.ContainerRequestContext;
@@ -28,6 +29,7 @@ public class ApplicationConfiguration {
                 .build();
     }
 
+    @RegisterForReflection
     public record  ExceptionMessage(
             LocalDateTime timestamp,
             int statusCode,
