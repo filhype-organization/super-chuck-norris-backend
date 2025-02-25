@@ -1,7 +1,7 @@
 ![Alt chuck](src/main/resources/Logo_Chuck_Norris2.png)
 # Chuck Norris Backend
 
-All documentation is available at this place: https://chuck.filhype.ovh
+All documentation is available at this place: https://filhype-organization.github.io/super-chuck-norris-doc/
 
 This project uses Quarkus, the Supersonic Subatomic Java Framework.
 
