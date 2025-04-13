@@ -10,6 +10,7 @@ accept: application/json
 POST {{host}}:{{port}}/{{path}}
 content-type: application/json
 accept: application/json
+Authorization: Bearer {{$auth.token("config")}}
 
 {
   "joke": "This is a joke"
