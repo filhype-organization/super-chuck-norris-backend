@@ -10,7 +10,7 @@ accept: application/json
 POST {{host}}:{{port}}/{{path}}
 content-type: application/json
 accept: application/json
-Authorization: Bearer {{$auth.token("config")}}
+Authorization: Bearer {{$auth.token("oauth2")}}
 
 {
   "joke": "This is a joke"
@@ -20,11 +20,12 @@ Authorization: Bearer {{$auth.token("config")}}
 PUT {{host}}:{{port}}/{{path}}
 Content-Type: application/json
 accept: application/json
+Authorization: Bearer {{$auth.token("oidc")}}
 
 {
-  "id": "b9355b82-0f16-484d-8ab4-2e4feb8cd82e",
-  "created_at": "2025-01-09T21:16:10.093248",
-  "joke": "toto"
+  "id": "f1af2e7c-3461-4427-8575-783510b755b4",
+  "created_at": "2025-04-13T21:26:02.732835",
+  "joke": "This is a joke2"
 }
 
 ### Suppression d'une blague
