@@ -1,8 +1,0 @@
-### POST to localhost keycloak
-POST http://localhost:8180/realms/quarkus/protocol/openid-connect/token
-Authorization: Basic {{$env.base64EncodedCredentials}}
-Content-Type: application/x-www-form-urlencoded
-
-grant_type=client_credentials &
-client_id={{clientId}} &
-client_secret={{clientSecret}}

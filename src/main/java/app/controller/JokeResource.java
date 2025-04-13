@@ -3,7 +3,6 @@ package app.controller;
 import app.entity.Joke;
 import app.service.JokeService;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
-import io.quarkus.security.PermissionsAllowed;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
@@ -41,7 +40,7 @@ public class JokeResource {
     @POST
     @Produces("application/json")
     @Consumes("application/json")
-    @PermissionsAllowed("admin")
+    @RolesAllowed({"user", "default-roles-quarkus"})
     public Joke addJoke(Joke joke) {
         return jokeService.AddJoke(joke);
     }
@@ -50,7 +49,7 @@ public class JokeResource {
     @PUT
     @Produces("application/json")
     @Consumes("application/json")
-    @RolesAllowed("admin")
+    @RolesAllowed({"user", "default-roles-quarkus"})
     public Joke updateJoke(Joke joke) {
         Joke j = jokeService.UpdateJoke(joke);
         if (j == null) {
@@ -62,7 +61,7 @@ public class JokeResource {
     @NoCache
     @DELETE
     @Path("{id}")
-    @RolesAllowed("admin")
+    @RolesAllowed({"user", "default-roles-quarkus"})
     public void deleteJoke(@RestPath UUID id) {
         Joke j = (Joke) Joke.findByIdOptional(id).orElseThrow(NoClassDefFoundError::new);
         jokeService.DeleteJoke(j.id);
