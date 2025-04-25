@@ -83,7 +83,7 @@ jobs:
           path: target-x86
 
   build-docker-arm64:
-    needs: [test, native-compile-arm64]
+    needs: [ native-compile-arm64 ]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -91,7 +91,7 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          path: target-arm64
+          path: target
 
       - name: Get version from pom.xml
         run: |
@@ -121,7 +121,7 @@ jobs:
             ${{ env.IMAGE_NAME }}:${{ env.version }}
 
   build-docker-x86:
-    needs: [ test, native-compile-x86 ]
+    needs: [ native-compile-x86 ]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -129,7 +129,7 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          path: target-x86
+          path: target
 
       - name: Get version from pom.xml
         run: |
