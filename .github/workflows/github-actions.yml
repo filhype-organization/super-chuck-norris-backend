@@ -24,7 +24,7 @@ jobs:
       - name: Run tests
         run: mvn test
 
-  native-compile:
+  native-compile-arm64:
     needs: test
     runs-on: ubuntu-latest
 
@@ -35,7 +35,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
-          java-version: ${{ env.JAVA_VERSION }}  # Utiliser la variable d'environnement
+          java-version: ${{ env.JAVA_VERSION }}
           distribution: 'temurin'
           cache: 'maven'
 
@@ -51,10 +51,39 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          path: target
+          path: target-arm64
 
-  build-docker:
-    needs: native-compile
+  native-compile-x86:
+    needs: test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Install packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y binfmt-support qemu-user-static
+
+      - name: Compilation
+        run: |
+          mvn clean package -Dnative -DskipTests -Dquarkus.native.container-build=true -Dquarkus.native.builder-image=quay.io/quarkus/ubi-quarkus-mandrel-builder-image:23.1.5.0-Final-java21
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          path: target-x86
+
+  build-docker-arm64:
+    needs: [test, native-compile-arm64]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -62,7 +91,7 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          path: target
+          path: target-arm64
 
       - name: Get version from pom.xml
         run: |
@@ -85,8 +114,46 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: ./target/artifact/
-          file: ./src/main/docker/Dockerfile.native-micro
+          file: ./src/main/docker/Dockerfile.native-micro-arm64
           platforms: linux/arm64
+          push: true
+          tags: |
+            ${{ env.IMAGE_NAME }}:${{ env.version }}
+
+  build-docker-x86:
+    needs: [ test, native-compile-x86 ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: target-x86
+
+      - name: Get version from pom.xml
+        run: |
+          version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          echo "version=$version" >> $GITHUB_ENV
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.LOGIN_DOCKER_HUB }}
+          password: ${{ secrets.TOKEN_DOCKER_HUB }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: ./target/artifact/
+          file: ./src/main/docker/Dockerfile.native-micro-x86
+          platforms: linux/amd64
           push: true
           tags: |
             ${{ env.IMAGE_NAME }}:${{ env.version }}
