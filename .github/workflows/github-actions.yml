@@ -50,8 +50,9 @@ jobs:
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
+        id: arm64
         with:
-          path: target-arm64
+          path: target
 
   native-compile-x86:
     needs: test
@@ -79,8 +80,9 @@ jobs:
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
+        id: x86
         with:
-          path: target-x86
+          path: target
 
   build-docker-arm64:
     needs: [ native-compile-arm64 ]
@@ -91,6 +93,7 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
+          artifact-ids: arm64
           path: target
 
       - name: Get version from pom.xml
@@ -113,7 +116,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          context: ./target-arm64/artifact/
+          context: ./target/artifact/
           file: ./src/main/docker/Dockerfile.native-micro-arm64
           platforms: linux/arm64
           push: true
@@ -129,6 +132,7 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
+          artifact-ids: x86
           path: target
 
       - name: Get version from pom.xml
@@ -151,7 +155,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          context: ./target-x86/artifact/
+          context: ./target/artifact/
           file: ./src/main/docker/Dockerfile.native-micro-x86
           platforms: linux/amd64
           push: true
