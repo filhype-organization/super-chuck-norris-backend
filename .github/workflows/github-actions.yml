@@ -207,6 +207,9 @@ jobs:
           tags: |
             ${{ env.IMAGE_NAME }}:${{ env.version }}-x86
 
+      - name: List images
+        run: docker images
+
       - uses: actions/download-artifact@v4
         with:
           name: artifact-arm64
@@ -221,6 +224,9 @@ jobs:
           push: false
           tags: |
             ${{ env.IMAGE_NAME }}:${{ env.version }}-arm64
+
+      - name: List images
+        run: docker images
 
       - name: Create and push manifest
         run: |
