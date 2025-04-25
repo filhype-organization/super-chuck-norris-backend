@@ -122,7 +122,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          context: ./target/artifact/
+          context: ./target/artifact-arm64/
           file: ./src/main/docker/Dockerfile.native-micro-arm64
           platforms: linux/arm64
           push: true
@@ -161,7 +161,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          context: ./target/artifact/
+          context: ./target/artifact-x86/
           file: ./src/main/docker/Dockerfile.native-micro-x86
           platforms: linux/amd64
           push: true
