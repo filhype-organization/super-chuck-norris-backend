@@ -53,8 +53,8 @@ jobs:
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
-        id: arm64
         with:
+          name: artifact-arm64
           path: target
 
   native-compile-x86:
@@ -86,8 +86,8 @@ jobs:
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
-        id: x86
         with:
+          name: artifact-x86
           path: target
 
   build-docker-arm64:
@@ -99,7 +99,7 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          artifact-ids: ${{needs.native-compile-arm64.outputs.id}}
+          name: artifact-arm64
           path: target
 
       - name: Get version from pom.xml
@@ -138,7 +138,7 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          artifact-ids: ${{needs.native-compile-x86.outputs.id}}
+          name: artifact-x86
           path: target
 
       - name: Get version from pom.xml
