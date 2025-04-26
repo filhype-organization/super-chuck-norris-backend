@@ -204,6 +204,7 @@ jobs:
           file: ./src/main/docker/Dockerfile.native-micro-x86
           platforms: linux/amd64
           push: true
+          load: true
           tags: |
             ${{ env.IMAGE_NAME }}:${{ env.version }}-x86
 
@@ -219,6 +220,7 @@ jobs:
           file: ./src/main/docker/Dockerfile.native-micro-arm64
           platforms: linux/arm64
           push: true
+          load: true
           tags: |
             ${{ env.IMAGE_NAME }}:${{ env.version }}-arm64
 
