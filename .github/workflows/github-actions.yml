@@ -224,7 +224,9 @@ jobs:
 
       - name: Create and push manifest
         run: |
+          docker manifest rm ${{ env.IMAGE_NAME }}:${{ env.version }} || true
           docker manifest create ${{ env.IMAGE_NAME }}:${{ env.version }} \
             --amend ${{ env.IMAGE_NAME }}:${{ env.version }}-x86 \
             --amend ${{ env.IMAGE_NAME }}:${{ env.version }}-arm64
-          docker manifest push ${{ env.IMAGE_NAME }}:${{ env.version }}
+          docker manifest inspect ${{ env.IMAGE_NAME }}:${{ env.version }}
+          docker manifest push --purge ${{ env.IMAGE_NAME }}:${{ env.version }}
