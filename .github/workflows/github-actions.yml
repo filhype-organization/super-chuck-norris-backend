@@ -17,7 +17,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
-          java-version: ${{ env.JAVA_VERSION }}  # Utiliser la variable d'environnement
+          java-version: ${{ env.JAVA_VERSION }}
           distribution: 'temurin'
           cache: 'maven'
 
@@ -203,13 +203,9 @@ jobs:
           context: ./target/
           file: ./src/main/docker/Dockerfile.native-micro-x86
           platforms: linux/amd64
-          push: false
-          load: true
+          push: true
           tags: |
             ${{ env.IMAGE_NAME }}:${{ env.version }}-x86
-
-      - name: List images
-        run: docker images
 
       - uses: actions/download-artifact@v4
         with:
@@ -222,13 +218,9 @@ jobs:
           context: ./target/
           file: ./src/main/docker/Dockerfile.native-micro-arm64
           platforms: linux/arm64
-          push: false
-          load: true
+          push: true
           tags: |
             ${{ env.IMAGE_NAME }}:${{ env.version }}-arm64
-
-      - name: List images
-        run: docker images
 
       - name: Create and push manifest
         run: |
