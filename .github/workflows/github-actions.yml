@@ -199,7 +199,11 @@ jobs:
 
       - name: Build X86 image
         run: |
-          docker buildx build . --tag ${{ env.IMAGE_NAME }}:${{ env.version }}-x86
+          docker buildx build . \
+          --tag ${{ env.IMAGE_NAME }}:${{ env.version }}-x86 \
+          --platform linux/amd64 \
+          -f ./src/main/docker/Dockerfile.native-micro \
+          --load
 
 #      - name: Build and push x86
 #        uses: docker/build-push-action@v6
@@ -219,7 +223,11 @@ jobs:
 
       - name: Build ARM64 image
         run: |
-          docker buildx build . --tag ${{ env.IMAGE_NAME }}:${{ env.version }}-arm64
+          docker buildx build . \
+          --tag ${{ env.IMAGE_NAME }}:${{ env.version }}-arm64 \
+          --platform linux/arm64 \
+          -f ./src/main/docker/Dockerfile.native-micro \
+          --load
 
 #      - name: Build and push arm64
 #        uses: docker/build-push-action@v6
