@@ -226,18 +226,8 @@ jobs:
 
       - name: Create and push manifest
         run: |
-          # Récupérer les digests des images
-          X86_DIGEST=$(docker inspect ${{ env.IMAGE_NAME }}:${{ env.version }}-x86 --format='{{index .RepoDigests 0}}')
-          ARM64_DIGEST=$(docker inspect ${{ env.IMAGE_NAME }}:${{ env.version }}-arm64 --format='{{index .RepoDigests 0}}')
-          
-          # Supprimer l'ancien manifest
-          docker manifest rm ${{ env.IMAGE_NAME }}:${{ env.version }} || true
-          
-          # Créer le nouveau manifest avec les digests
           docker manifest create ${{ env.IMAGE_NAME }}:${{ env.version }} \
-            --amend "${X86_DIGEST}" \
-            --amend "${ARM64_DIGEST}"
+            --amend "${{ env.IMAGE_NAME }}:${{ env.version }}-x86" \
+            --amend "${{ env.IMAGE_NAME }}:${{ env.version }}-arm64"
           
-          # Vérifier et pousser
-          docker manifest inspect ${{ env.IMAGE_NAME }}:${{ env.version }}
-          docker manifest push --purge ${{ env.IMAGE_NAME }}:${{ env.version }}
+          docker manifest push ${{ env.IMAGE_NAME }}:${{ env.version }}
