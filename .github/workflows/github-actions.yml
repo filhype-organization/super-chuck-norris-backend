@@ -123,7 +123,7 @@ jobs:
           name: artifact-x86
           path: target
 
-      - name: Build and push x86
+      - name: Build x86 image
         uses: docker/build-push-action@v6
         with:
           context: ./target/
@@ -139,7 +139,7 @@ jobs:
           name: artifact-arm64
           path: target
 
-      - name: Build and push arm64
+      - name: Build arm64 image
         uses: docker/build-push-action@v6
         with:
           context: ./target/
@@ -153,8 +153,8 @@ jobs:
 
       - name: Create and push manifest
         run: |
-          DIGEST_X86=$(docker manifest inspect ${{ env.DOCKER_IMAGE_NAME }}:${{ env.version }}-x86 | jq -r '.manifests[] | select(.platform.architecture=="amd64").digest')
-          DIGEST_ARM64=$(docker manifest inspect ${{ env.DOCKER_IMAGE_NAME }}:${{ env.version }}-arm64 | jq -r '.manifests[] | select(.platform.architecture=="arm64").digest')
+          DIGEST_X86=$(docker manifest inspect ${{ vars.DOCKER_IMAGE_NAME }}:${{ env.version }}-x86 | jq -r '.manifests[] | select(.platform.architecture=="amd64").digest')
+          DIGEST_ARM64=$(docker manifest inspect ${{ vars.DOCKER_IMAGE_NAME }}:${{ env.version }}-arm64 | jq -r '.manifests[] | select(.platform.architecture=="arm64").digest')
           
           docker manifest create ${{ vars.DOCKER_IMAGE_NAME }}:${{ env.version }} \
           ${{ vars.DOCKER_IMAGE_NAME }}@${DIGEST_X86} \
