@@ -197,32 +197,41 @@ jobs:
           name: artifact-x86
           path: target
 
-      - name: Build and push x86
-        uses: docker/build-push-action@v6
-        with:
-          context: ./target/
-          file: ./src/main/docker/Dockerfile.native-micro-x86
-          platforms: linux/amd64
-          push: true
-          load: true
-          tags: |
-            ${{ env.IMAGE_NAME }}:${{ env.version }}-x86
+      - name: Build X86 image
+        run: |
+          docker buildx build . --tag ${{ env.IMAGE_NAME }}:${{ env.version }}-x86
+
+#      - name: Build and push x86
+#        uses: docker/build-push-action@v6
+#        with:
+#          context: ./target/
+#          file: ./src/main/docker/Dockerfile.native-micro-x86
+#          platforms: linux/amd64
+#          push: true
+#          load: true
+#          tags: |
+#            ${{ env.IMAGE_NAME }}:${{ env.version }}-x86
 
       - uses: actions/download-artifact@v4
         with:
           name: artifact-arm64
           path: target
 
-      - name: Build and push arm64
-        uses: docker/build-push-action@v6
-        with:
-          context: ./target/
-          file: ./src/main/docker/Dockerfile.native-micro-arm64
-          platforms: linux/arm64
-          push: true
-          load: true
-          tags: |
-            ${{ env.IMAGE_NAME }}:${{ env.version }}-arm64
+      - name: Build ARM64 image
+        run: |
+          docker buildx build . --tag ${{ env.IMAGE_NAME }}:${{ env.version }}-arm64
+
+#      - name: Build and push arm64
+#        uses: docker/build-push-action@v6
+#        with:
+#          context: ./target/
+#          file: ./src/main/docker/Dockerfile.native-micro-arm64
+#          platforms: linux/arm64
+#          push: true
+#          load: true
+#          tags: |
+#            ${{ env.IMAGE_NAME }}:${{ env.version }}-arm64
+
 
       - name: Create and push manifest
         run: |
