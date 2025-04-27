@@ -244,7 +244,7 @@ jobs:
       - name: Create and push manifest
         run: |
           docker manifest create ${{ env.IMAGE_NAME }}:${{ env.version }} \
-            --amend "${{ env.IMAGE_NAME }}:${{ env.version }}-x86" \
-            --amend "${{ env.IMAGE_NAME }}:${{ env.version }}-arm64"
+            --amend "${{ env.IMAGE_NAME }}:${{ env.version }}-x86" --os linux --arch amd64\
+            --amend "${{ env.IMAGE_NAME }}:${{ env.version }}-arm64" --os linux --arch arm64
           
           docker manifest push ${{ env.IMAGE_NAME }}:${{ env.version }}
