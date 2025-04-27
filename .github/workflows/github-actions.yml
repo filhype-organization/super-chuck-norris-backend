@@ -243,8 +243,11 @@ jobs:
 
       - name: Create and push manifest
         run: |
+          DIGEST_X86=$(docker manifest inspect ${{ env.IMAGE_NAME }}:${{ env.version }}-x86 | jq -r '.manifests[] | select(.platform.architecture=="amd64").digest')
+          DIGEST_ARM64=$(docker manifest inspect ${{ env.IMAGE_NAME }}:${{ env.version }}-arm64 | jq -r '.manifests[] | select(.platform.architecture=="arm64").digest')
+          
           docker manifest create ${{ env.IMAGE_NAME }}:${{ env.version }} \
-            --amend "${{ env.IMAGE_NAME }}:${{ env.version }}-x86" --os linux --arch amd64\
-            --amend "${{ env.IMAGE_NAME }}:${{ env.version }}-arm64" --os linux --arch arm64
+          ${{ env.IMAGE_NAME }}@${DIGEST_X86} \
+          ${{ env.IMAGE_NAME }}@${DIGEST_ARM64}
           
           docker manifest push ${{ env.IMAGE_NAME }}:${{ env.version }}
