@@ -129,8 +129,8 @@ jobs:
           context: ./target/
           file: ./src/main/docker/Dockerfile.native-micro
           platforms: linux/amd64
-          push: false
-          load: true
+          push: true
+          load: false
           tags: |
             ${{ vars.DOCKER_IMAGE_NAME }}:${{ env.version }}-x86
 
@@ -145,8 +145,8 @@ jobs:
           context: ./target/
           file: ./src/main/docker/Dockerfile.native-micro
           platforms: linux/arm64
-          push: false
-          load: true
+          push: true
+          load: false
           tags: |
             ${{ vars.DOCKER_IMAGE_NAME }}:${{ env.version }}-arm64
 
