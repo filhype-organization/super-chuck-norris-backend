@@ -130,7 +130,6 @@ jobs:
           file: ./src/main/docker/Dockerfile.native-micro
           platforms: linux/amd64
           push: true
-          load: false
           tags: |
             ${{ vars.DOCKER_IMAGE_NAME }}:${{ env.version }}-x86
 
@@ -146,7 +145,6 @@ jobs:
           file: ./src/main/docker/Dockerfile.native-micro
           platforms: linux/arm64
           push: true
-          load: false
           tags: |
             ${{ vars.DOCKER_IMAGE_NAME }}:${{ env.version }}-arm64
 
@@ -161,3 +159,13 @@ jobs:
           ${{ vars.DOCKER_IMAGE_NAME }}@${DIGEST_ARM64}
           
           docker manifest push ${{ vars.DOCKER_IMAGE_NAME }}:${{ env.version }}
+
+      - name: Delete intermediate tags
+        run: |
+          TOKEN=$(curl -s -H "Content-Type: application/json" -X POST -d '{"username": "${{ secrets.LOGIN_DOCKER_HUB }}", "password": "${{ secrets.TOKEN_DOCKER_HUB }}"}' https://hub.docker.com/v2/users/login/ | jq -r .token)
+
+          # Supprimer le tag x86
+          curl -X DELETE -H "Authorization: Bearer ${TOKEN}" https://hub.docker.com/v2/repositories/${{ vars.DOCKER_IMAGE_NAME }}/tags/${{ env.version }}-x86/
+
+          # Supprimer le tag arm64
+          curl -X DELETE -H "Authorization: Bearer ${TOKEN}" https://hub.docker.com/v2/repositories/${{ vars.DOCKER_IMAGE_NAME }}/tags/${{ env.version }}-arm64/
