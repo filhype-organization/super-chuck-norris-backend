@@ -162,10 +162,20 @@ jobs:
 
       - name: Delete intermediate tags
         run: |
-          TOKEN=$(curl -s -H "Content-Type: application/json" -X POST -d '{"username": "${{ secrets.LOGIN_DOCKER_HUB }}", "password": "${{ secrets.TOKEN_DOCKER_HUB }}"}' https://hub.docker.com/v2/users/login/ | jq -r .token)
-
-          # Supprimer le tag x86
-          curl -X DELETE -H "Authorization: Bearer ${TOKEN}" https://hub.docker.com/v2/repositories/${{ vars.DOCKER_IMAGE_NAME }}/tags/${{ env.version }}-x86/
-
-          # Supprimer le tag arm64
-          curl -X DELETE -H "Authorization: Bearer ${TOKEN}" https://hub.docker.com/v2/repositories/${{ vars.DOCKER_IMAGE_NAME }}/tags/${{ env.version }}-arm64/
+          # Authentification
+          TOKEN=$(curl -s -H "Content-Type: application/json" \
+            -X POST \
+            -d "{\"username\": \"${{ secrets.LOGIN_DOCKER_HUB }}\", \"password\": \"${{ secrets.TOKEN_DOCKER_HUB }}\"}" \
+            https://hub.docker.com/v2/users/login/ | jq -r .token)
+          
+          # Extraction du namespace et du repository
+          IFS='/' read -r NAMESPACE REPO <<< "${{ vars.DOCKER_IMAGE_NAME }}"
+          
+          # Supprimer les tags
+          curl -X DELETE \
+            -H "Authorization: JWT ${TOKEN}" \
+            "https://hub.docker.com/v2/repositories/${NAMESPACE}/${REPO}/tags/${{ env.version }}-x86/"
+          
+          curl -X DELETE \
+            -H "Authorization: JWT ${TOKEN}" \
+            "https://hub.docker.com/v2/repositories/${NAMESPACE}/${REPO}/tags/${{ env.version }}-arm64/"
