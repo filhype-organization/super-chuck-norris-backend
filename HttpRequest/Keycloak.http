@@ -1,0 +1,95 @@
+# Create user Bob
+POST {{host}}:{{port}}/{{add_user_path}}
+accept: application/json
+Authorization: Bearer {{$auth.token("oauth2")}}
+
+{
+  "username": "bob",
+  "enabled": true,
+  "credentials": [
+    {
+      "type": "password",
+      "value": "bob",
+      "temporary": false
+    }
+  ]
+}
+
+###
+# Create user Alice
+POST http://localhost:8180/admin/realms/app/users
+accept: application/json
+Authorization: Bearer {{$auth.token("oauth2")}}
+
+{
+  "username": "alice",
+  "enabled": true,
+  "credentials": [
+    {
+      "type": "password",
+      "value": "alice",
+      "temporary": false
+    }
+  ]
+}
+
+###
+# Get users id
+GET {{host}}:{{port}}/{{get_users_path}}
+accept: application/json
+Authorization: Bearer {{$auth.token("oauth2")}}
+
+> {%
+    const users = response.body;
+    const alice = users.find(user => user.username === 'alice');
+    const bob = users.find(user => user.username === 'bob');
+    client.global.set("alice_user_id", alice.id);
+    client.global.set("bob_user_id", bob.id);
+%}
+
+###
+# Get roles
+GET {{host}}:{{port}}/{{get_roles_path}}
+accept: application/json
+Authorization: Bearer {{$auth.token("oauth2")}}
+
+> {%
+    const roles = response.body;
+    const userRole = roles.find(role => role.name === 'user');
+    const adminRole = roles.find(role => role.name === 'admin');
+    client.global.set("user_role_id", userRole.id);
+    client.global.set("admin_role_id", adminRole.id);
+%}
+
+###
+# Assign user role to Bob
+POST {{host}}:{{port}}/admin/realms/app/users/{{bob_user_id}}/role-mappings/realm
+accept: application/json
+Authorization: Bearer {{$auth.token("oauth2")}}
+
+[
+  {
+    "id": "{{user_role_id}}",
+    "name": "user"
+  }
+]
+
+###
+
+# Assign user role to Alice
+POST {{host}}:{{port}}/admin/realms/app/users/{{alice_user_id}}/role-mappings/realm
+accept: application/json
+Authorization: Bearer {{$auth.token("oauth2")}}
+
+[
+  {
+    "id": "{{user_role_id}}",
+    "name": "user"
+  },
+  {
+    "id": "{{admin_role_id}}",
+    "name": "admin"
+  }
+]
+
+###

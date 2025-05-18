@@ -20,6 +20,7 @@ public class JokeResource {
     @GET
     @Path("/getRandomJoke")
     @Produces("application/json")
+    @RolesAllowed({"user","admin","read","write"})
     public Joke getRandomJoke() {
         Joke j = jokeService.GetRandomJoke();
         if (j == null) {
@@ -31,6 +32,7 @@ public class JokeResource {
     @GET
     @Path("{id}")
     @Produces("application/json")
+    @RolesAllowed({"user","admin","read","write"})
     public PanacheEntityBase getJokeById(@RestPath UUID id) {
         return Joke.findByIdOptional(id).orElseThrow(NotFoundException::new);
     }
@@ -40,7 +42,7 @@ public class JokeResource {
     @POST
     @Produces("application/json")
     @Consumes("application/json")
-    @RolesAllowed({"user", "default-roles-quarkus"})
+    @RolesAllowed({"admin","write"})
     public Joke addJoke(Joke joke) {
         return jokeService.AddJoke(joke);
     }
@@ -49,7 +51,7 @@ public class JokeResource {
     @PUT
     @Produces("application/json")
     @Consumes("application/json")
-    @RolesAllowed({"user", "default-roles-quarkus"})
+    @RolesAllowed({"admin","write"})
     public Joke updateJoke(Joke joke) {
         Joke j = jokeService.UpdateJoke(joke);
         if (j == null) {
@@ -61,7 +63,7 @@ public class JokeResource {
     @NoCache
     @DELETE
     @Path("{id}")
-    @RolesAllowed({"user", "default-roles-quarkus"})
+    @RolesAllowed({"admin","write"})
     public void deleteJoke(@RestPath UUID id) {
         Joke j = (Joke) Joke.findByIdOptional(id).orElseThrow(NoClassDefFoundError::new);
         jokeService.DeleteJoke(j.id);
