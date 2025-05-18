@@ -1,10 +1,12 @@
 ### Récupération d'une blague
 GET {{host}}:{{port}}/{{path}}/getRandomJoke
 accept: application/json
+Authorization: Bearer {{$auth.token("oauth2")}}
 
 ### Récupération par id
-GET {{host}}:{{port}}/{{path}}/f4741513-f6af-4c44-9338-643a6407b482
+GET {{host}}:{{port}}/{{path}}/bb699cd6-4172-465d-9ebd-c7ae72917671
 accept: application/json
+Authorization: Bearer {{$auth.token("oauth2")}}
 
 ### Ajout d'une blague
 POST {{host}}:{{port}}/{{path}}
@@ -20,13 +22,15 @@ Authorization: Bearer {{$auth.token("oauth2")}}
 PUT {{host}}:{{port}}/{{path}}
 Content-Type: application/json
 accept: application/json
-Authorization: Bearer {{$auth.token("oidc")}}
+Authorization: Bearer {{$auth.token("oauth2")}}
 
 {
-  "id": "f1af2e7c-3461-4427-8575-783510b755b4",
+  "id": "bb699cd6-4172-465d-9ebd-c7ae72917671",
   "created_at": "2025-04-13T21:26:02.732835",
   "joke": "This is a joke2"
 }
 
 ### Suppression d'une blague
-DELETE {{host}}:{{port}}/{{path}}/ba31f13b-3b1f-4db0-bf0e-9371e6cc956a
+DELETE {{host}}:{{port}}/{{path}}/bb699cd6-4172-465d-9ebd-c7ae72917671
+accept: application/json
+Authorization: Bearer {{$auth.token("oauth2")}}
