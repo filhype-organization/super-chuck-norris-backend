@@ -2,8 +2,12 @@ package app.controller;
 
 import app.entity.Joke;
 import io.quarkus.test.junit.QuarkusTest;
+import io.restassured.specification.RequestSpecification;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.containsString;
@@ -11,7 +15,8 @@ import static org.hamcrest.Matchers.containsString;
 @QuarkusTest
 class JokeResourceTest {
 
-    static final String basePath = "/api/jokes/v1";
+    private static final String BASE_PATH = "/api/jokes/v1";
+    private RequestSpecification requestSpec;
 
     @ConfigProperty(name = "quarkus.oidc.client-id")
     String clientId;
@@ -22,8 +27,18 @@ class JokeResourceTest {
     @ConfigProperty(name = "test-url-keycloak")
     String authServerUrl;
 
-    protected String GetAccessToken() {
-        return "Bearer " + given().contentType("application/x-www-form-urlencoded")
+    @BeforeEach
+    void setUp() {
+        String accessToken = getAccessToken();
+        requestSpec = given()
+                .basePath(BASE_PATH)
+                .header("Authorization", accessToken)
+                .contentType("application/json");
+    }
+
+    private String getAccessToken() {
+        return "Bearer " + given()
+                .contentType("application/x-www-form-urlencoded")
                 .formParam("grant_type", "client_credentials")
                 .formParam("client_id", clientId)
                 .formParam("client_secret", clientSecret)
@@ -34,10 +49,14 @@ class JokeResourceTest {
                 .extract().path("access_token");
     }
 
+    private Joke getFirstJoke() {
+        return Joke.findAll().firstResult();
+    }
+
     @Test
     void getRandomJoke() {
-        given()
-                .when().basePath(basePath)
+        requestSpec
+                .when()
                 .get("getRandomJoke")
                 .then()
                 .statusCode(200)
@@ -46,26 +65,21 @@ class JokeResourceTest {
 
     @Test
     void getJokeById() {
-        Joke j  = Joke.findAll().firstResult();
-
-        given()
-                .when().basePath(basePath)
-                .pathParams("id", j.id)
+        Joke joke = getFirstJoke();
+        requestSpec
+                .pathParams("id", joke.id)
+                .when()
                 .get("{id}")
                 .then()
                 .statusCode(200)
                 .body(containsString("created_at"));
     }
 
-    @Test
-    void addJoke() {
-        String newJoke = "This is a test joke";
-        String token = GetAccessToken();
-
-        given().basePath(basePath)
-                .header("Authorization", token)
+    @ParameterizedTest
+    @ValueSource(strings = {"This is a test joke"})
+    void addJoke(String newJoke) {
+        requestSpec
                 .body(String.format("{\"joke\":\"%s\"}", newJoke))
-                .contentType("application/json")
                 .when()
                 .post()
                 .then()
@@ -73,18 +87,14 @@ class JokeResourceTest {
                 .body(containsString(newJoke));
     }
 
-    @Test
-    void updateJoke() {
-        String newJoke = "This is a test2 joke";
-        String token = GetAccessToken();
+    @ParameterizedTest
+    @ValueSource(strings = {"This is a test2 joke"})
+    void updateJoke(String newJoke) {
+        Joke joke = getFirstJoke();
+        joke.joke = newJoke;
 
-        Joke j  = Joke.findAll().firstResult();
-        j.joke = newJoke;
-
-        given().basePath(basePath)
-                .header("Authorization", token)
-                .body(j)
-                .contentType("application/json")
+        requestSpec
+                .body(joke)
                 .when()
                 .put()
                 .then()
@@ -94,13 +104,10 @@ class JokeResourceTest {
 
     @Test
     void deleteJoke() {
-        Joke j  = Joke.findAll().firstResult();
-        String token = GetAccessToken();
-
-        given()
-                .when().basePath(basePath)
-                .header("Authorization", token)
-                .pathParams("id", j.id)
+        Joke joke = getFirstJoke();
+        requestSpec
+                .pathParams("id", joke.id)
+                .when()
                 .delete("{id}")
                 .then()
                 .statusCode(204);
