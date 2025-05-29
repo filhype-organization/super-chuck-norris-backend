@@ -106,7 +106,18 @@ jobs:
 
       - name: Get tage version
         run: |
-          echo "version=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
+          # Extraction de la version de base depuis le tag
+          BASE_VERSION=${GITHUB_REF#refs/tags/v}
+          
+          # Récupération de la branche courante
+          BRANCH_NAME=${GITHUB_REF#refs/heads/}
+          
+          # Ajout de -SNAPSHOT si la branche n'est pas main
+          if [ "$BRANCH_NAME" != "main" ]; then
+            echo "version=${BASE_VERSION}-SNAPSHOT" >> $GITHUB_ENV
+          else
+            echo "version=${BASE_VERSION}" >> $GITHUB_ENV
+          fi
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
