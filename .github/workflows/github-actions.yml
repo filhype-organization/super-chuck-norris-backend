@@ -23,83 +23,83 @@ jobs:
       - name: Run tests
         run: mvn test
 
-  compilation:
-    native-compile-arm64:
-      needs: test
-      runs-on: ubuntu-latest
 
-      outputs:
-        id: ${{ steps.artifact-upload-step.outputs.artifact-id }}
+  native-compile-arm64:
+    needs: test
+    runs-on: ubuntu-latest
 
-      steps:
-        - name: Checkout code
-          uses: actions/checkout@v4
+    outputs:
+      id: ${{ steps.artifact-upload-step.outputs.artifact-id }}
 
-        - name: Set up JDK
-          uses: actions/setup-java@v3
-          with:
-            java-version: ${{ vars.JAVA_VERSION }}
-            distribution: 'temurin'
-            cache: 'maven'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-        - name: Install packages
-          run: |
-            sudo apt-get update
-            sudo apt-get install -y binfmt-support qemu-user-static
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: ${{ vars.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: 'maven'
 
-        - name: Compilation
-          run: |
-            mvn clean package \
-            -Dnative -DskipTests \
-            -Dquarkus.native.container-build=true \
-            -Dquarkus.native.container-runtime-options=--platform=linux/arm64 \
-            -Dquarkus.native.builder-image=quay.io/quarkus/ubi-quarkus-mandrel-builder-image:jdk-${{ vars.JAVA_VERSION }}
+      - name: Install packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y binfmt-support qemu-user-static
 
-        - name: Upload artifact
-          uses: actions/upload-artifact@v4
-          with:
-            name: artifact-arm64
-            path: target
+      - name: Compilation
+        run: |
+          mvn clean package \
+          -Dnative -DskipTests \
+          -Dquarkus.native.container-build=true \
+          -Dquarkus.native.container-runtime-options=--platform=linux/arm64 \
+          -Dquarkus.native.builder-image=quay.io/quarkus/ubi-quarkus-mandrel-builder-image:jdk-${{ vars.JAVA_VERSION }}
 
-    native-compile-x86:
-      needs: test
-      runs-on: ubuntu-latest
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: artifact-arm64
+          path: target
 
-      outputs:
-        id: ${{ steps.artifact-upload-step.outputs.artifact-id }}
+  native-compile-x86:
+    needs: test
+    runs-on: ubuntu-latest
 
-      steps:
-        - name: Checkout code
-          uses: actions/checkout@v4
+    outputs:
+      id: ${{ steps.artifact-upload-step.outputs.artifact-id }}
 
-        - name: Set up JDK
-          uses: actions/setup-java@v3
-          with:
-            java-version: ${{ vars.JAVA_VERSION }}
-            distribution: 'temurin'
-            cache: 'maven'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-        - name: Install packages
-          run: |
-            sudo apt-get update
-            sudo apt-get install -y binfmt-support qemu-user-static
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: ${{ vars.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: 'maven'
 
-        - name: Compilation
-          run: |
-            mvn clean package \
-            -Dnative -DskipTests \
-            -Dquarkus.native.container-build=true \
-            -Dquarkus.native.container-runtime-options=--platform=linux/amd64 \
-            -Dquarkus.native.builder-image=quay.io/quarkus/ubi-quarkus-mandrel-builder-image:jdk-${{ vars.JAVA_VERSION }}
+      - name: Install packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y binfmt-support qemu-user-static
 
-        - name: Upload artifact
-          uses: actions/upload-artifact@v4
-          with:
-            name: artifact-x86
-            path: target
+      - name: Compilation
+        run: |
+          mvn clean package \
+          -Dnative -DskipTests \
+          -Dquarkus.native.container-build=true \
+          -Dquarkus.native.container-runtime-options=--platform=linux/amd64 \
+          -Dquarkus.native.builder-image=quay.io/quarkus/ubi-quarkus-mandrel-builder-image:jdk-${{ vars.JAVA_VERSION }}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: artifact-x86
+          path: target
 
   build-docker:
-    needs: [ compilation ]
+    needs: [ native-compile-arm64, native-compile-x86 ]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -194,28 +194,27 @@ jobs:
             -H "Authorization: JWT ${TOKEN}" \
             "https://hub.docker.com/v2/repositories/${NAMESPACE}/${REPO}/tags/${{ env.version }}-arm64/"
 
-  code-quality:
-    jobs:
-      codacy-analysis-cli:
-        name: Codacy Analysis CLI
-        runs-on: ubuntu-latest
-        steps:
-          - name: Checkout code
-            uses: actions/checkout@main
+  codacy-analysis-cli:
+    name: Codacy Analysis CLI
+    needs: [ build-docker ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@main
 
-          - name: Run Codacy Analysis CLI
-            uses: codacy/codacy-analysis-cli-action@master
+      - name: Run Codacy Analysis CLI
+        uses: codacy/codacy-analysis-cli-action@master
 
-  code-security:
-    jobs:
-      secret_detection:
-        runs-on: ubuntu-latest
-        steps:
-          - name: Checkout code
-            uses: actions/checkout@v4
-            with:
-              fetch-depth: 0
-          - name: Secret Scanning
-            uses: trufflesecurity/trufflehog@main
-            with:
-              extra_args: --results=verified,unknown
+
+  secret_detection:
+    runs-on: ubuntu-latest
+    needs: [ codacy-analysis-cli ]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Secret Scanning
+        uses: trufflesecurity/trufflehog@main
+        with:
+          extra_args: --results=verified,unknown
