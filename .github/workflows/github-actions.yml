@@ -23,82 +23,83 @@ jobs:
       - name: Run tests
         run: mvn test
 
-  native-compile-arm64:
-    needs: test
-    runs-on: ubuntu-latest
+  compilation:
+    native-compile-arm64:
+      needs: test
+      runs-on: ubuntu-latest
 
-    outputs:
-      id: ${{ steps.artifact-upload-step.outputs.artifact-id }}
+      outputs:
+        id: ${{ steps.artifact-upload-step.outputs.artifact-id }}
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v4
 
-      - name: Set up JDK
-        uses: actions/setup-java@v3
-        with:
-          java-version: ${{ vars.JAVA_VERSION }}
-          distribution: 'temurin'
-          cache: 'maven'
+        - name: Set up JDK
+          uses: actions/setup-java@v3
+          with:
+            java-version: ${{ vars.JAVA_VERSION }}
+            distribution: 'temurin'
+            cache: 'maven'
 
-      - name: Install packages
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y binfmt-support qemu-user-static
+        - name: Install packages
+          run: |
+            sudo apt-get update
+            sudo apt-get install -y binfmt-support qemu-user-static
 
-      - name: Compilation
-        run: |
-          mvn clean package \
-          -Dnative -DskipTests \
-          -Dquarkus.native.container-build=true \
-          -Dquarkus.native.container-runtime-options=--platform=linux/arm64 \
-          -Dquarkus.native.builder-image=quay.io/quarkus/ubi-quarkus-mandrel-builder-image:jdk-${{ vars.JAVA_VERSION }}
+        - name: Compilation
+          run: |
+            mvn clean package \
+            -Dnative -DskipTests \
+            -Dquarkus.native.container-build=true \
+            -Dquarkus.native.container-runtime-options=--platform=linux/arm64 \
+            -Dquarkus.native.builder-image=quay.io/quarkus/ubi-quarkus-mandrel-builder-image:jdk-${{ vars.JAVA_VERSION }}
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: artifact-arm64
-          path: target
+        - name: Upload artifact
+          uses: actions/upload-artifact@v4
+          with:
+            name: artifact-arm64
+            path: target
 
-  native-compile-x86:
-    needs: test
-    runs-on: ubuntu-latest
+    native-compile-x86:
+      needs: test
+      runs-on: ubuntu-latest
 
-    outputs:
-      id: ${{ steps.artifact-upload-step.outputs.artifact-id }}
+      outputs:
+        id: ${{ steps.artifact-upload-step.outputs.artifact-id }}
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v4
 
-      - name: Set up JDK
-        uses: actions/setup-java@v3
-        with:
-          java-version: ${{ vars.JAVA_VERSION }}
-          distribution: 'temurin'
-          cache: 'maven'
+        - name: Set up JDK
+          uses: actions/setup-java@v3
+          with:
+            java-version: ${{ vars.JAVA_VERSION }}
+            distribution: 'temurin'
+            cache: 'maven'
 
-      - name: Install packages
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y binfmt-support qemu-user-static
+        - name: Install packages
+          run: |
+            sudo apt-get update
+            sudo apt-get install -y binfmt-support qemu-user-static
 
-      - name: Compilation
-        run: |
-          mvn clean package \
-          -Dnative -DskipTests \
-          -Dquarkus.native.container-build=true \
-          -Dquarkus.native.container-runtime-options=--platform=linux/amd64 \
-          -Dquarkus.native.builder-image=quay.io/quarkus/ubi-quarkus-mandrel-builder-image:jdk-${{ vars.JAVA_VERSION }}
+        - name: Compilation
+          run: |
+            mvn clean package \
+            -Dnative -DskipTests \
+            -Dquarkus.native.container-build=true \
+            -Dquarkus.native.container-runtime-options=--platform=linux/amd64 \
+            -Dquarkus.native.builder-image=quay.io/quarkus/ubi-quarkus-mandrel-builder-image:jdk-${{ vars.JAVA_VERSION }}
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: artifact-x86
-          path: target
+        - name: Upload artifact
+          uses: actions/upload-artifact@v4
+          with:
+            name: artifact-x86
+            path: target
 
   build-docker:
-    needs: [ native-compile-x86, native-compile-arm64 ]
+    needs: [ compilation ]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -192,3 +193,29 @@ jobs:
           curl -X DELETE \
             -H "Authorization: JWT ${TOKEN}" \
             "https://hub.docker.com/v2/repositories/${NAMESPACE}/${REPO}/tags/${{ env.version }}-arm64/"
+
+  code-quality:
+    jobs:
+      codacy-analysis-cli:
+        name: Codacy Analysis CLI
+        runs-on: ubuntu-latest
+        steps:
+          - name: Checkout code
+            uses: actions/checkout@main
+
+          - name: Run Codacy Analysis CLI
+            uses: codacy/codacy-analysis-cli-action@master
+
+  code-security:
+    jobs:
+      secret_detection:
+        runs-on: ubuntu-latest
+        steps:
+          - name: Checkout code
+            uses: actions/checkout@v4
+            with:
+              fetch-depth: 0
+          - name: Secret Scanning
+            uses: trufflesecurity/trufflehog@main
+            with:
+              extra_args: --results=verified,unknown
