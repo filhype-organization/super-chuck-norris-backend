@@ -1,6 +1,9 @@
 name: Chuck Norris action
 
-on: [push, pull_request]
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+'
 
 jobs:
   test:
@@ -101,10 +104,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Get version from pom.xml
+      - name: Get tage version
         run: |
-          version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
-          echo "version=$version" >> $GITHUB_ENV
+          echo "version=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
