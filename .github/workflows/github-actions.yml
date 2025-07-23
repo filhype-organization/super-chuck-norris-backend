@@ -13,7 +13,7 @@ jobs:
       build_platform: 'x86'
       container_build: true
       docker_image_name: 'leeson77/chuck-norris-backend'
-      enable_java_build: false
+      enable_java_build: true
     secrets:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       DOCKER_USERNAME: ${{ secrets.LOGIN_DOCKER_HUB }}
