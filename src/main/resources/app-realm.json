@@ -522,7 +522,61 @@
       },
       "notBefore": 0,
       "groups": []
-    }
+    },
+    {
+    "id" : "eb4123a3-b722-4798-9af5-8957f823657a",
+    "username" : "alice",
+    "firstName": "Alice",
+    "lastName": "Liddell",
+    "email": "alice@disney.com",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : true,
+    "credentials" : [ {
+      "type" : "password",
+      "hashedSaltedValue" : "A3okqV2T/ybXTVEgKfosoSjP8Yc9IZbFP/SY4cEd6hag7TABQrQ6nUSuwagGt96l8cw1DTijO75PqX6uiTXMzw==",
+      "salt" : "sl4mXx6T9FypPH/s9TngfQ==",
+      "hashIterations" : 27500,
+      "counter" : 0,
+      "algorithm" : "pbkdf2-sha256",
+      "digits" : 0,
+      "period" : 0,
+      "createdDate" : 1554245879116,
+      "config" : { }
+    } ],
+    "disableableCredentialTypes" : [ "password" ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "user", "admin" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  },
+  {
+    "id" : "fb2345b4-c833-5909-0bg6-9068f834768b",
+    "username" : "bob",
+    "firstName": "Bob",
+    "lastName": "Builder",
+    "email": "bob@example.com",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : true,
+    "credentials" : [ {
+      "type" : "password",
+      "hashedSaltedValue" : "2QeCYmrxmpEDP/6D5YLyrhtXQdBnEOs9eGnXsTtvmls=",
+      "salt" : "R6B3bJnLQ8ck+Xq6i2STrw==",
+      "hashIterations" : 27500,
+      "counter" : 0,
+      "algorithm" : "pbkdf2-sha256",
+      "digits" : 0,
+      "period" : 0,
+      "createdDate" : 1747122800000,
+      "config" : { }
+    } ],
+    "disableableCredentialTypes" : [ "password" ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "user" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  }
   ],
   "scopeMappings": [
     {
@@ -847,18 +901,20 @@
       "clientId": "front",
       "name": "",
       "description": "",
-      "rootUrl": "",
+      "rootUrl": "http://localhost",
       "adminUrl": "",
-      "baseUrl": "",
+      "baseUrl": "http://localhost",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-none",
       "redirectUris": [
-        "*"
+        "http://localhost/*",
+        "http://localhost:4200/*"
       ],
       "webOrigins": [
-        "*"
+        "http://localhost",
+        "http://localhost:4200"
       ],
       "notBefore": 0,
       "bearerOnly": false,
@@ -873,7 +929,7 @@
       "attributes": {
         "oidc.ciba.grant.enabled": "false",
         "backchannel.logout.session.required": "true",
-        "post.logout.redirect.uris": "+",
+        "post.logout.redirect.uris": "http://localhost/*##http://localhost:4200/*",
         "oauth2.device.authorization.grant.enabled": "false",
         "display.on.consent.screen": "false",
         "backchannel.logout.revoke.offline.tokens": "false"
