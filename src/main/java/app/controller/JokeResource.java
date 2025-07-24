@@ -6,16 +6,28 @@ import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Response;
 import org.jboss.resteasy.reactive.NoCache;
 import org.jboss.resteasy.reactive.ResponseStatus;
 import org.jboss.resteasy.reactive.RestPath;
+
+import java.util.List;
 import java.util.UUID;
 
-@Path("/api/jokes/v1")
+@Path("/api/v1/jokes")
 public class JokeResource {
 
     @Inject
     JokeService jokeService;
+
+    @GET
+    public Response getAllJokes(@QueryParam("page") int page,
+            @QueryParam("size") int size) {
+        var count = jokeService.CountJokes();
+        return Response.ok(jokeService.GetAllJokes(page, size))
+                .header("X-Total-Count", count)
+                .build();
+    }
 
     @GET
     @Path("/getRandomJoke")

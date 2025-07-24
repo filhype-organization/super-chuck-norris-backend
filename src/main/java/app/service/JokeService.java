@@ -1,8 +1,11 @@
 package app.service;
 
 import app.entity.Joke;
+import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
+
+import java.util.List;
 import java.util.UUID;
 
 @ApplicationScoped
@@ -12,6 +15,14 @@ public class JokeService {
         long count = Joke.count();
         int random = (int) (Math.random() * count);
         return Joke.findAll().page(random, 1).firstResult();
+    }
+
+    public Long CountJokes() {
+        return Joke.count();
+    }
+
+    public List<Joke> GetAllJokes(int pageIndex, int pageSize) {
+        return Joke.findAll().page(pageIndex, pageSize).list();
     }
 
     @Transactional

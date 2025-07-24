@@ -15,7 +15,7 @@ import static org.hamcrest.Matchers.containsString;
 @QuarkusTest
 class JokeResourceTest {
 
-    private static final String BASE_PATH = "/api/jokes/v1";
+    private static final String BASE_PATH = "/api/v1/jokes";
     private RequestSpecification requestSpec;
 
     @ConfigProperty(name = "quarkus.oidc.client-id")
