@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    uses: filhype-organization/universal-devops-action/.github/workflows/github-actions.yml@main
+    uses: filhype-organization/universal-devops-action/.github/workflows/github-actions.yml@fix-doc
     with:
       build_platforms: '["amd64","arm64"]'
       build_type: 'native'
