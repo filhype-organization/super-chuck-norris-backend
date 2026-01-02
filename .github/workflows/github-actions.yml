@@ -9,7 +9,7 @@ jobs:
   build:
     uses: filhype-organization/universal-devops-action/.github/workflows/github-actions.yml@main
     with:
-      build_platforms: '["amd64"]'
+      build_platforms: '["amd64", "arm64"]'
       build_type: 'native'
       container_build: true
       docker_image_name: 'leeson77/chuck-norris-backend'
