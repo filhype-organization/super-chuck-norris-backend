@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "skills": {
+    "api-contract-review": {
+      "source": "decebals/claude-code-java",
+      "sourceType": "github",
+      "computedHash": "45bef8c7476e9c4fb6e0632cc4fd11abbcbf190e5423125d34f190b8a509e87a"
+    },
+    "architecture-review": {
+      "source": "decebals/claude-code-java",
+      "sourceType": "github",
+      "computedHash": "333f6a55496e71fddf33c4987ccb79593409dc34b2b4c72f0eb6e6d394427b2b"
+    },
+    "clean-code": {
+      "source": "decebals/claude-code-java",
+      "sourceType": "github",
+      "computedHash": "f7c92967881750fd50e618f608a816c02981a33fa4ce59439bad71ddf15b7674"
+    },
+    "java-code-review": {
+      "source": "decebals/claude-code-java",
+      "sourceType": "github",
+      "computedHash": "5ad43f17a91a29205b52c52f86812e4901b4d3e388d3e8d10b8618299ce9e020"
+    }
+  }
+}

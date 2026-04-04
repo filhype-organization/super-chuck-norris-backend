@@ -1,0 +1,7 @@
+# Ensure shell scripts always use LF line endings on checkout
+mvnw text eol=lf
+
+# Windows batch scripts use CRLF
+mvnw.cmd text eol=crlf
+*.bat text eol=crlf
+*.cmd text eol=crlf

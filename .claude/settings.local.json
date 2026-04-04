@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//mnt/c/Users/Utilisateur/sources/super-chuck-norris/**)",
+      "Bash(./mvnw -DquarkusRegistryClient=true io.quarkus:quarkus-maven-plugin:3.34.2:update -e -N -ntp)",
+      "Bash(java -version)",
+      "Bash(mvn -version)",
+      "Bash(./mvnw -version)",
+      "Bash(git:*)",
+      "Bash(dos2unix /mnt/c/Users/Utilisateur/sources/super-chuck-norris/chuck-backend/mvnw)",
+      "Bash(cp /tmp/mvnw_lf /mnt/c/Users/Utilisateur/sources/super-chuck-norris/chuck-backend/mvnw)",
+      "Bash(/mnt/c/Users/Utilisateur/sources/super-chuck-norris/chuck-backend/mvnw -version)",
+      "WebFetch(domain:skillsmp.com)",
+      "Read(//home/leeson/.claude/**)",
+      "Bash(npx skills:*)",
+      "Bash(grep -v \"^$\")",
+      "WebFetch(domain:skills.sh)"
+    ]
+  }
+}
