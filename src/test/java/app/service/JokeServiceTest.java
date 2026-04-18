@@ -5,6 +5,8 @@ import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 @QuarkusTest
 class JokeServiceTest {
 
@@ -13,7 +15,7 @@ class JokeServiceTest {
 
     @Test
     void getRandomJoke() {
-        assert jokeService.GetRandomJoke().id != null;
+        assertNotNull(jokeService.getRandomJoke().id);
     }
 
     @Test
@@ -22,7 +24,7 @@ class JokeServiceTest {
         Joke j = new Joke();
         j.joke = text;
 
-        assert jokeService.AddJoke(j).joke.equals(text);
+        assertEquals(text, jokeService.addJoke(j).joke);
     }
 
     @Test
@@ -31,10 +33,10 @@ class JokeServiceTest {
         Joke j = new Joke();
         j.joke = text;
 
-        Joke joke = jokeService.AddJoke(j);
+        Joke joke = jokeService.addJoke(j);
         joke.joke = "This is an updated test joke";
 
-        assert jokeService.UpdateJoke(joke).joke.equals("This is an updated test joke");
+        assertEquals("This is an updated test joke", jokeService.updateJoke(joke).joke);
     }
 
     @Test
@@ -43,9 +45,9 @@ class JokeServiceTest {
         Joke j = new Joke();
         j.joke = text;
 
-        Joke joke = jokeService.AddJoke(j);
-        jokeService.DeleteJoke(joke.id);
+        Joke joke = jokeService.addJoke(j);
+        jokeService.deleteJoke(joke.id);
 
-        assert Joke.findByIdOptional(joke.id).isEmpty();
+        assertTrue(Joke.findByIdOptional(joke.id).isEmpty());
     }
 }
