@@ -20,8 +20,8 @@ public class JokeResource {
 
     @GET
     @Produces("application/json")
-    public Response getAllJokes(@QueryParam("page") int page,
-            @QueryParam("size") int size) {
+    public Response getAllJokes(@QueryParam("page") @DefaultValue("0") int page,
+            @QueryParam("size") @DefaultValue("20") int size) {
         var count = jokeService.countJokes();
         List<Joke> listJoke = jokeService.getAllJokes(page, size);
         return Response.ok(listJoke)
