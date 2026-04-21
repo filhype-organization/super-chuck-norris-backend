@@ -25,7 +25,7 @@ jobs:
     if: github.ref == 'refs/heads/main'
     steps:
       - name: Checkout IaC repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: filhype-organization/iac-chucknorris-backend
           token: ${{ secrets.IAC_REPO_TOKEN }}
