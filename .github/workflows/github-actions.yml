@@ -30,20 +30,18 @@ jobs:
           repository: filhype-organization/iac-chucknorris-backend
           token: ${{ secrets.IAC_REPO_TOKEN }}
 
-      - name: Update image tag in deployment manifest
+      - name: Update image tag in bundle
         run: |
           SHORT_SHA="${GITHUB_SHA:0:7}"
-          IMAGE_TAG="${SHORT_SHA}"
-          sed -i "s|leeson77/chuck-norris-backend:.*|leeson77/chuck-norris-backend:${IMAGE_TAG} # {\"\$imagepolicy\": \"flux-system:chuck-norris-backend\"}|" \
-            deploy/deployment.yaml
+          sed -i "s|tag: \".*\" // CI updates this line automatically.*|tag: \"${SHORT_SHA}\" // CI updates this line automatically — do not edit manually.|" \
+            bundle/bundle.cue
 
       - name: Commit and push
         run: |
           SHORT_SHA="${GITHUB_SHA:0:7}"
-          IMAGE_TAG="${SHORT_SHA}"
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add deploy/deployment.yaml
+          git add bundle/bundle.cue
           git diff --staged --quiet || \
-            git commit -m "chore: deploy backend image ${IMAGE_TAG} [skip ci]"
+            git commit -m "chore: deploy backend image ${SHORT_SHA} [skip ci]"
           git push
