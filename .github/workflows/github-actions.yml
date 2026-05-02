@@ -33,7 +33,7 @@ jobs:
       - name: Update image tag in bundle
         run: |
           SHORT_SHA="${GITHUB_SHA:0:7}"
-          sed -i "s|tag: \".*\" // CI updates this line automatically.*|tag: \"${SHORT_SHA}\" // CI updates this line automatically — do not edit manually.|" \
+          sed -i "s|tag: \".*\" // CI:backend updates this line automatically.*|tag: \"${SHORT_SHA}\" // CI:backend updates this line automatically — do not edit manually.|" \
             bundle/bundle.cue
 
       - name: Commit and push
