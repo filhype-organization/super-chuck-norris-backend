@@ -1,6 +1,8 @@
 package app.configuration;
 
 import io.quarkus.runtime.annotations.RegisterForReflection;
+import io.quarkus.security.ForbiddenException;
+import io.quarkus.security.UnauthorizedException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.container.ContainerRequestContext;
@@ -19,6 +21,10 @@ public class ApplicationConfiguration {
         int status = 500;
         if (thisException instanceof WebApplicationException) {
             status = ((WebApplicationException) thisException).getResponse().getStatus();
+        } else if (thisException instanceof UnauthorizedException) {
+            status = 401;
+        } else if (thisException instanceof ForbiddenException) {
+            status = 403;
         }
 
         ExceptionMessage exceptionMessage = new ExceptionMessage(LocalDateTime.now(), status, thisException.getMessage(), uriInfo.getPath(), containerRequestContext.getMethod());
