@@ -2,6 +2,7 @@ package app.controller;
 
 import app.entity.Joke;
 import app.service.JokeService;
+import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
@@ -32,7 +33,7 @@ public class JokeResource {
     @GET
     @Path("getRandomJoke")
     @Produces("application/json")
-    @RolesAllowed({"user","admin","read","write"})
+    @PermitAll
     public Joke getRandomJoke() {
         return jokeService.getRandomJoke();
     }
